@@ -25,6 +25,15 @@
           "frameWidth": 20,
           "frameHeight": 20
         }
+      },
+      {
+        "type": "image",
+        "key": "wood",
+        "url": "./src/assets/images/wood.png",
+        "frameConfig": {
+          "frameWidth": 282,
+          "frameHeight": 87
+        }
       }
     ]
   }

@@ -7,10 +7,12 @@
 
 import { Bird } from "../objects/bird";
 import { BlueFish } from "../objects/blueFish";
+import { Wood } from "../objects/wood"
 
 export class GameScene extends Phaser.Scene {
   private bird: Bird;
   private blueFishes: Phaser.GameObjects.Group;
+  private woods: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
@@ -48,6 +50,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(2);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
+    this.woods = this.add.group({ classType: Wood });
 
     this.bird = new Bird({
       scene: this,
@@ -62,6 +65,8 @@ export class GameScene extends Phaser.Scene {
     this.addNewBlueFish();
     this.setTimerForBlueFishes();
 
+    this.addNewWood();
+    this.setTimerForWoods();
 
   }
 
@@ -130,16 +135,37 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  private setTimerForBlueFishes() {
+      this.timedEvent =  this.time.addEvent({
+      delay: 2500,
+      callback: this.addNewBlueFish,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  private addNewWood(): void {
+    // create a new pipe at the position x and y and add it to group
+    this.woods.add(
+        new Wood({
+          scene: this,
+          x: 1400,
+          y: 38,
+          key: "wood"
+        })
+    );
+  }
+
   private getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
-  private setTimerForBlueFishes() {
-      this.timedEvent =  this.time.addEvent({
-      delay: 2500,
-      callback: this.addNewBlueFish,
+  private setTimerForWoods() {
+    this.timedEvent =  this.time.addEvent({
+      delay: 4500,
+      callback: this.addNewWood,
       callbackScope: this,
       loop: true
     });
