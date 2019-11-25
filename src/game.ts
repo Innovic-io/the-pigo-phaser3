@@ -10,7 +10,7 @@ import { GameScene } from "./scenes/game-scene";
 
 const config: GameConfig = {
   width: 1390,
-  height: 600,
+  height: 480,
   parent: "game",
   scene: [GameScene],
   input: {

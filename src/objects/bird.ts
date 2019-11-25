@@ -22,7 +22,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // sprite
-    this.setScale(3);
+    this.setScale(2);
     this.setOrigin(0, 0);
 
     // variables
@@ -32,7 +32,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     // physics
     this.scene.physics.world.enable(this);
     this.body.setGravityY(1000);
-    this.body.setSize(34, 39);
+    this.body.setSize(46, 36);
 
     // input
     this.jumpKey = this.scene.input.keyboard.addKey(

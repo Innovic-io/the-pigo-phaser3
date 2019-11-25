@@ -13,7 +13,7 @@ export class GameScene extends Phaser.Scene {
   private pipes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
-  private timedEvent: any
+  private timedEvent: any;
 
   constructor() {
     super({
@@ -114,18 +114,17 @@ export class GameScene extends Phaser.Scene {
     //     }
     //   }
     // }
-    this.addPipe(400, i * 60, 0);
+    this.addPipe(400, i * 60);
     this.resetTimer();
   }
 
-  private addPipe(x: number, y: number, frame: number): void {
+  private addPipe(x: number, y: number): void {
     // create a new pipe at the position x and y and add it to group
     this.pipes.add(
       new Pipe({
         scene: this,
         x: 1400,
         y: y,
-        frame: frame,
         key: "pipe"
       })
     );
@@ -139,12 +138,11 @@ export class GameScene extends Phaser.Scene {
 
   private setTimerForPipes() {
       this.timedEvent =  this.time.addEvent({
-      delay: 1500,
+      delay: 2500,
       callback: this.addNewRowOfPipes,
       callbackScope: this,
       loop: true
     });
-    console.log(this.timedEvent);
   }
 
   private resetTimer(): void {
