@@ -34,6 +34,15 @@
           "frameWidth": 282,
           "frameHeight": 87
         }
+      },
+      {
+        "type": "image",
+        "key": "yellowFish",
+        "url": "./src/assets/images/yellowFish.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
       }
     ]
   }

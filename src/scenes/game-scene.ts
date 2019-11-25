@@ -8,11 +8,13 @@
 import { Bird } from "../objects/bird";
 import { BlueFish } from "../objects/blueFish";
 import { Wood } from "../objects/wood"
+import { YellowFish } from '../objects/YellowFish';
 
 export class GameScene extends Phaser.Scene {
   private bird: Bird;
   private blueFishes: Phaser.GameObjects.Group;
   private woods: Phaser.GameObjects.Group;
+  private yellowFish: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
@@ -51,6 +53,7 @@ export class GameScene extends Phaser.Scene {
 
     this.blueFishes = this.add.group({ classType: BlueFish });
     this.woods = this.add.group({ classType: Wood });
+    this.yellowFish = this.add.group({ classType: YellowFish });
 
     this.bird = new Bird({
       scene: this,
@@ -67,6 +70,9 @@ export class GameScene extends Phaser.Scene {
 
     this.addNewWood();
     this.setTimerForWoods();
+
+    this.addNewRowsOfYellowFish();
+    this.setTimerForYellowFish();
 
   }
 
@@ -92,6 +98,20 @@ export class GameScene extends Phaser.Scene {
           null,
           this
       );
+      this.physics.overlap(this.bird, this.yellowFish,
+          () => {
+            this.registry.values.score += 1;
+
+            Phaser.Actions.Call(
+                this.yellowFish.getChildren(),
+                function(fish) {
+                  fish.destroy();
+                },
+                this
+            );
+
+            this.scoreText.setText(this.registry.values.score);
+          }, null, this);
     } else {
       Phaser.Actions.Call(
         this.blueFishes.getChildren(),
@@ -136,8 +156,13 @@ export class GameScene extends Phaser.Scene {
     //     }
     //   }
     // }
-    this.addBlueFish(400, i * 48);
+    this.addBlueFish(1400, i * 48);
     this.resetTimer();
+  }
+
+  private addNewRowsOfYellowFish(): void {
+    let i = this.getRandomInt(2, 9);
+    this.   addYellowFish(1400, i * 48);
   }
 
   private addBlueFish(x: number, y: number): void {
@@ -145,10 +170,21 @@ export class GameScene extends Phaser.Scene {
     this.blueFishes.add(
       new BlueFish({
         scene: this,
-        x: 1400,
+        x: x,
         y: y,
         key: "blue-fish"
       })
+    );
+  }
+
+  private addYellowFish(x: number, y: number): void {
+    this.yellowFish.add(
+        new YellowFish({
+          scene: this,
+          x: x,
+          y: y,
+          key: "yellowFish"
+        })
     );
   }
 
@@ -156,6 +192,15 @@ export class GameScene extends Phaser.Scene {
       this.timedEvent =  this.time.addEvent({
       delay: 2500,
       callback: this.addNewBlueFish,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  private setTimerForYellowFish() {
+    this.timedEvent =  this.time.addEvent({
+      delay: 5000,
+      callback: this.addNewRowsOfYellowFish,
       callbackScope: this,
       loop: true
     });
