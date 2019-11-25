@@ -13,6 +13,7 @@ export class GameScene extends Phaser.Scene {
   private pipes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
+  private timedEvent: any
 
   constructor() {
     super({
@@ -34,7 +35,7 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.background = this.add
-      .tileSprite(0, 0, 390, 600, "background")
+      .tileSprite(0, 0, 1390, 1600, "background")
       .setOrigin(0, 0);
 
     this.scoreText = this.add
@@ -51,7 +52,7 @@ export class GameScene extends Phaser.Scene {
     this.bird = new Bird({
       scene: this,
       x: 50,
-      y: 100,
+      y: 200,
       key: "bird"
     });
 
@@ -59,13 +60,9 @@ export class GameScene extends Phaser.Scene {
     // TIMER
     // *****************************************************************
     this.addNewRowOfPipes();
+    this.setTimerForPipes();
 
-    this.time.addEvent({
-      delay: 1500,
-      callback: this.addNewRowOfPipes,
-      callbackScope: this,
-      loop: true
-    });
+
   }
 
   update(): void {
@@ -98,24 +95,27 @@ export class GameScene extends Phaser.Scene {
 
   private addNewRowOfPipes(): void {
     // update the score
+
     this.registry.values.score += 1;
     this.scoreText.setText(this.registry.values.score);
 
     // randomly pick a number between 1 and 5
-    let hole = Math.floor(Math.random() * 5) + 1;
+    let i = this.getRandomInt(2, 9);
 
     // add 6 pipes with one big hole at position hole and hole + 1
-    for (let i = 0; i < 10; i++) {
-      if (i !== hole && i !== hole + 1 && i !== hole + 2) {
-        if (i === hole - 1) {
-          this.addPipe(400, i * 60, 0);
-        } else if (i === hole + 3) {
-          this.addPipe(400, i * 60, 1);
-        } else {
-          this.addPipe(400, i * 60, 2);
-        }
-      }
-    }
+    // for (let i = 0; i < 10; i++) {
+    //   if (i !== hole && i !== hole + 1 && i !== hole + 2) {
+    //     if (i === hole - 1) {
+    //       this.addPipe(400, i * 60, 0);
+    //     } else if (i === hole + 3) {
+    //       this.addPipe(400, i * 60, 1);
+    //     } else {
+    //       this.addPipe(400, i * 60, 2);
+    //     }
+    //   }
+    // }
+    this.addPipe(400, i * 60, 0);
+    this.resetTimer();
   }
 
   private addPipe(x: number, y: number, frame: number): void {
@@ -123,11 +123,36 @@ export class GameScene extends Phaser.Scene {
     this.pipes.add(
       new Pipe({
         scene: this,
-        x: x,
+        x: 1400,
         y: y,
         frame: frame,
         key: "pipe"
       })
     );
+  }
+
+  private getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+  }
+
+  private setTimerForPipes() {
+      this.timedEvent =  this.time.addEvent({
+      delay: 1500,
+      callback: this.addNewRowOfPipes,
+      callbackScope: this,
+      loop: true
+    });
+    console.log(this.timedEvent);
+  }
+
+  private resetTimer(): void {
+    // this.timedEvent.reset({
+    //   delay: Phaser.Math.Between(1500,5000),
+    //   callback: this.addNewRowOfPipes,
+    //   callbackScope: this,
+    //   loop: true
+    // });
   }
 }

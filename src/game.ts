@@ -9,7 +9,7 @@ import "phaser";
 import { GameScene } from "./scenes/game-scene";
 
 const config: GameConfig = {
-  width: 390,
+  width: 1390,
   height: 600,
   parent: "game",
   scene: [GameScene],

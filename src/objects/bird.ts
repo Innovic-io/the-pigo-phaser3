@@ -32,7 +32,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     // physics
     this.scene.physics.world.enable(this);
     this.body.setGravityY(1000);
-    this.body.setSize(17, 12);
+    this.body.setSize(34, 39);
 
     // input
     this.jumpKey = this.scene.input.keyboard.addKey(
@@ -44,9 +44,9 @@ export class Bird extends Phaser.GameObjects.Sprite {
 
   update(): void {
     // handle angle change
-    if (this.angle < 30) {
-      this.angle += 2;
-    }
+    // if (this.angle < 30) {
+    //   this.angle += 2;
+    // }
 
     // handle input
     if (this.jumpKey.isDown && !this.isFlapping) {
@@ -55,7 +55,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
       this.body.setVelocityY(-350);
       this.scene.tweens.add({
         targets: this,
-        props: { angle: -20 },
+        // props: { angle: -20 },
         duration: 150,
         ease: "Power0"
       });
