@@ -1,11 +1,4 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2019 Digitsensitive
- * @description  Flappy Bird: Pipe
- * @license      Digitsensitive
- */
-
-export class Pipe extends Phaser.GameObjects.Image {
+export class BlueFish extends Phaser.GameObjects.Image {
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
 

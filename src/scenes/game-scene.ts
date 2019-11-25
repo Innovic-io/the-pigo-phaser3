@@ -6,11 +6,11 @@
  */
 
 import { Bird } from "../objects/bird";
-import { Pipe } from "../objects/pipe";
+import { BlueFish } from "../objects/blueFish";
 
 export class GameScene extends Phaser.Scene {
   private bird: Bird;
-  private pipes: Phaser.GameObjects.Group;
+  private blueFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
@@ -47,7 +47,7 @@ export class GameScene extends Phaser.Scene {
       )
       .setDepth(2);
 
-    this.pipes = this.add.group({ classType: Pipe });
+    this.blueFishes = this.add.group({ classType: BlueFish });
 
     this.bird = new Bird({
       scene: this,
@@ -59,8 +59,8 @@ export class GameScene extends Phaser.Scene {
     // *****************************************************************
     // TIMER
     // *****************************************************************
-    this.addNewRowOfPipes();
-    this.setTimerForPipes();
+    this.addNewBlueFish();
+    this.setTimerForBlueFishes();
 
 
   }
@@ -71,7 +71,7 @@ export class GameScene extends Phaser.Scene {
       this.bird.update();
       this.physics.overlap(
         this.bird,
-        this.pipes,
+        this.blueFishes,
         function() {
           this.bird.setDead(true);
         },
@@ -80,9 +80,9 @@ export class GameScene extends Phaser.Scene {
       );
     } else {
       Phaser.Actions.Call(
-        this.pipes.getChildren(),
-        function(pipe) {
-          pipe.body.setVelocityX(0);
+        this.blueFishes.getChildren(),
+        function(blueFish) {
+          blueFish.body.setVelocityX(0);
         },
         this
       );
@@ -93,7 +93,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private addNewRowOfPipes(): void {
+  private addNewBlueFish(): void {
     // update the score
 
     this.registry.values.score += 1;
@@ -106,26 +106,26 @@ export class GameScene extends Phaser.Scene {
     // for (let i = 0; i < 10; i++) {
     //   if (i !== hole && i !== hole + 1 && i !== hole + 2) {
     //     if (i === hole - 1) {
-    //       this.addPipe(400, i * 60, 0);
+    //       this.addBlueFish(400, i * 60, 0);
     //     } else if (i === hole + 3) {
-    //       this.addPipe(400, i * 60, 1);
+    //       this.addBlueFish(400, i * 60, 1);
     //     } else {
-    //       this.addPipe(400, i * 60, 2);
+    //       this.addBlueFish(400, i * 60, 2);
     //     }
     //   }
     // }
-    this.addPipe(400, i * 60);
+    this.addBlueFish(400, i * 48);
     this.resetTimer();
   }
 
-  private addPipe(x: number, y: number): void {
+  private addBlueFish(x: number, y: number): void {
     // create a new pipe at the position x and y and add it to group
-    this.pipes.add(
-      new Pipe({
+    this.blueFishes.add(
+      new BlueFish({
         scene: this,
         x: 1400,
         y: y,
-        key: "pipe"
+        key: "blue-fish"
       })
     );
   }
@@ -136,10 +136,10 @@ export class GameScene extends Phaser.Scene {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
-  private setTimerForPipes() {
+  private setTimerForBlueFishes() {
       this.timedEvent =  this.time.addEvent({
       delay: 2500,
-      callback: this.addNewRowOfPipes,
+      callback: this.addNewBlueFish,
       callbackScope: this,
       loop: true
     });

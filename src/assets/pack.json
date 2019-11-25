@@ -19,8 +19,8 @@
       },
       {
         "type": "image",
-        "key": "pipe",
-        "url": "./src/assets/images/pipe.png",
+        "key": "blue-fish",
+        "url": "./src/assets/images/blue-fish.png",
         "frameConfig": {
           "frameWidth": 20,
           "frameHeight": 20
