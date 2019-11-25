@@ -83,6 +83,15 @@ export class GameScene extends Phaser.Scene {
         null,
         this
       );
+      this.physics.overlap(
+          this.bird,
+          this.woods,
+          function() {
+            this.bird.setDead(true);
+          },
+          null,
+          this
+      );
     } else {
       Phaser.Actions.Call(
         this.blueFishes.getChildren(),
@@ -90,6 +99,14 @@ export class GameScene extends Phaser.Scene {
           blueFish.body.setVelocityX(0);
         },
         this
+      );
+
+      Phaser.Actions.Call(
+          this.woods.getChildren(),
+          function(wood) {
+            wood.body.setVelocityX(0);
+          },
+          this
       );
 
       if (this.bird.y > this.sys.canvas.height) {
@@ -155,13 +172,6 @@ export class GameScene extends Phaser.Scene {
         })
     );
   }
-
-  private getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-  }
-
   private setTimerForWoods() {
     this.timedEvent =  this.time.addEvent({
       delay: 4500,
@@ -169,6 +179,12 @@ export class GameScene extends Phaser.Scene {
       callbackScope: this,
       loop: true
     });
+  }
+
+  private getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
   private resetTimer(): void {
