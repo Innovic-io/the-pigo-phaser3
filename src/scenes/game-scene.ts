@@ -26,7 +26,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.registry.set("score", -1);
+    this.registry.set("score", 0);
   }
 
   preload(): void {
@@ -137,9 +137,6 @@ export class GameScene extends Phaser.Scene {
 
   private addNewBlueFish(): void {
     // update the score
-
-    this.registry.values.score += 1;
-    this.scoreText.setText(this.registry.values.score);
 
     // randomly pick a number between 1 and 5
     let i = this.getRandomInt(2, 9);
