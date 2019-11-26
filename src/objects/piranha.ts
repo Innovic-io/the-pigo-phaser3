@@ -1,11 +1,11 @@
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2019 Digitsensitive
- * @description  Flappy Bird: Bird
+ * @description  Flappy Piranha: Piranha
  * @license      Digitsensitive
  */
 
-export class Bird extends Phaser.GameObjects.Sprite {
+export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
   private isDead: boolean;
   private isFlapping: boolean;

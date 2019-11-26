@@ -1,7 +1,7 @@
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2019 Digitsensitive
- * @description  Flappy Bird: Game
+ * @description  Flappy Piranha: Game
  * @license      Digitsensitive
  */
 

@@ -1,7 +1,7 @@
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2019 Digitsensitive
- * @description  Flappy Bird: Pipe
+ * @description  Flappy Piranha: Pipe
  * @license      Digitsensitive
  */
 

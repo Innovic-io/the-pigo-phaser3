@@ -1,17 +1,17 @@
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2019 Digitsensitive
- * @description  Flappy Bird: Game Scene
+ * @description  Flappy Piranha: Game Scene
  * @license      Digitsensitive
  */
 
-import { Bird } from "../objects/bird";
+import { Piranha } from "../objects/piranha";
 import { BlueFish } from "../objects/blueFish";
 import { Wood } from "../objects/wood"
 import { YellowFish } from '../objects/YellowFish';
 
 export class GameScene extends Phaser.Scene {
-  private bird: Bird;
+  private bird: Piranha;
   private blueFishes: Phaser.GameObjects.Group;
   private woods: Phaser.GameObjects.Group;
   private yellowFish: Phaser.GameObjects.Group;
@@ -55,7 +55,7 @@ export class GameScene extends Phaser.Scene {
     this.woods = this.add.group({ classType: Wood });
     this.yellowFish = this.add.group({ classType: YellowFish });
 
-    this.bird = new Bird({
+    this.bird = new Piranha({
       scene: this,
       x: 50,
       y: 200,
