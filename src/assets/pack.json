@@ -14,8 +14,8 @@
       },
       {
         "type": "image",
-        "key": "bird",
-        "url": "./src/assets/images/bird.png"
+        "key": "piranha",
+        "url": "./src/assets/images/piranha.png"
       },
       {
         "type": "image",

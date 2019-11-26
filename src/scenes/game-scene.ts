@@ -11,7 +11,7 @@ import { Wood } from "../objects/wood"
 import { YellowFish } from '../objects/YellowFish';
 
 export class GameScene extends Phaser.Scene {
-  private bird: Piranha;
+  private piranha: Piranha;
   private blueFishes: Phaser.GameObjects.Group;
   private woods: Phaser.GameObjects.Group;
   private yellowFish: Phaser.GameObjects.Group;
@@ -55,11 +55,11 @@ export class GameScene extends Phaser.Scene {
     this.woods = this.add.group({ classType: Wood });
     this.yellowFish = this.add.group({ classType: YellowFish });
 
-    this.bird = new Piranha({
+    this.piranha = new Piranha({
       scene: this,
       x: 50,
       y: 200,
-      key: "bird"
+      key: "piranha"
     });
 
     // *****************************************************************
@@ -77,28 +77,28 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(): void {
-    if (!this.bird.getDead()) {
+    if (!this.piranha.getDead()) {
       this.background.tilePositionX += 4;
-      this.bird.update();
+      this.piranha.update();
       this.physics.overlap(
-        this.bird,
+        this.piranha,
         this.blueFishes,
         function() {
-          this.bird.setDead(true);
+          this.piranha.setDead(true);
         },
         null,
         this
       );
       this.physics.overlap(
-          this.bird,
+          this.piranha,
           this.woods,
           function() {
-            this.bird.setDead(true);
+            this.piranha.setDead(true);
           },
           null,
           this
       );
-      this.physics.overlap(this.bird, this.yellowFish,
+      this.physics.overlap(this.piranha, this.yellowFish,
           () => {
             this.registry.values.score += 1;
 
@@ -129,7 +129,7 @@ export class GameScene extends Phaser.Scene {
           this
       );
 
-      if (this.bird.y > this.sys.canvas.height) {
+      if (this.piranha.y > this.sys.canvas.height) {
         this.scene.restart();
       }
     }
@@ -154,7 +154,6 @@ export class GameScene extends Phaser.Scene {
     //   }
     // }
     this.addBlueFish(1400, i * 48);
-    this.resetTimer();
   }
 
   private addNewRowsOfYellowFish(): void {
@@ -187,7 +186,7 @@ export class GameScene extends Phaser.Scene {
 
   private setTimerForBlueFishes() {
       this.timedEvent =  this.time.addEvent({
-      delay: 2500,
+      delay: 1000,
       callback: this.addNewBlueFish,
       callbackScope: this,
       loop: true
@@ -229,12 +228,4 @@ export class GameScene extends Phaser.Scene {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
-  private resetTimer(): void {
-    // this.timedEvent.reset({
-    //   delay: Phaser.Math.Between(1500,5000),
-    //   callback: this.addNewRowOfPipes,
-    //   callbackScope: this,
-    //   loop: true
-    // });
-  }
 }
