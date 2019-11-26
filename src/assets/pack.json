@@ -67,6 +67,24 @@
           "frameWidth": 20,
           "frameHeight": 20
         }
+      },
+      {
+        "type": "image",
+        "key": "worm-speed-up",
+        "url": "./src/assets/images/worm-speed-up.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "worm-slow-down",
+        "url": "./src/assets/images/worm-slow-down.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
       }
     ]
   }

@@ -10,11 +10,15 @@ import { BlueFish } from "../objects/blueFish";
 import { Wood } from "../objects/wood"
 import { YellowFish } from '../objects/YellowFish';
 import { DangerFish } from "../objects/DangerFish";
+import { WormSpeedUp } from "../objects/WormSpeedUp";
+import { WormSlowDown } from "../objects/WormSlowDown";
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
   private blueFishes: Phaser.GameObjects.Group;
   private dangerFishes: Phaser.GameObjects.Group;
+  private speedUpWorms: Phaser.GameObjects.Group;
+  private slowDownWorms: Phaser.GameObjects.Group;
   private woods: Phaser.GameObjects.Group;
   private yellowFish: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
@@ -56,6 +60,8 @@ export class GameScene extends Phaser.Scene {
 
     this.blueFishes = this.add.group({ classType: BlueFish });
     this.dangerFishes = this.add.group({ classType: BlueFish });
+    this.speedUpWorms = this.add.group({ classType: WormSpeedUp });
+    this.slowDownWorms = this.add.group({ classType: WormSlowDown });
     this.woods = this.add.group({ classType: Wood });
     this.yellowFish = this.add.group({ classType: YellowFish });
 
@@ -72,12 +78,10 @@ export class GameScene extends Phaser.Scene {
     // TIMER
     // *****************************************************************
     this.setTimerForBlueFishes();
-
     this.setTimerForDangerFishes();
-
     this.setTimerForWoods();
-
     this.setTimerForYellowFish();
+    this.setTimerForRewards();
 
     this.changePiranhaImage();
 
@@ -133,6 +137,25 @@ export class GameScene extends Phaser.Scene {
           }, null, this);
     } else {
         this.piranha.setTexture('dead-piranha');
+
+        if(this.speedUpWorms.children.entries.length) {
+            Phaser.Actions.Call(
+                this.speedUpWorms.getChildren(),
+                function(worm) {
+                    worm.body.setVelocity(0);
+                },
+                this
+            );
+        }
+        if(this.slowDownWorms.children.entries.length) {
+            Phaser.Actions.Call(
+                this.slowDownWorms.getChildren(),
+                function(worm) {
+                    worm.body.setVelocity(0);
+                },
+                this
+            );
+        }
         // Phaser.Actions.Call(
       //   this.blueFishes.getChildren(),
       //   function(blueFish) {
@@ -226,7 +249,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addDangerFish(x: number, y: number): void {
-      // create a new pipe at the position x and y and add it to group
       this.dangerFishes.add(
           new DangerFish({
               scene: this,
@@ -236,6 +258,36 @@ export class GameScene extends Phaser.Scene {
           })
       );
   }
+
+    private addReward(): void {
+        const position = {
+            x: this.getRandomInt(1400, 1800),
+            y: this.getRandomInt(50, 320),
+        };
+        this.getRandomInt(0,2) ? this.addSpeedUpWorm(position) : this.addSlowDownWorm(position);
+    }
+
+    private addSpeedUpWorm(postition) {
+        this.speedUpWorms.add(
+            new WormSpeedUp({
+                scene: this,
+                x: postition.x,
+                y: postition.y,
+                key: "worm-speed-up"
+            })
+        );
+    }
+
+    private addSlowDownWorm(position): void {
+        this.slowDownWorms.add(
+            new WormSlowDown({
+                scene: this,
+                x: position.x,
+                y: position.y,
+                key: "worm-slow-down"
+            })
+        );
+    }
 
   private setTimerForDangerFishes() {
       this.timedEvent = this.time.addEvent({
@@ -273,6 +325,15 @@ export class GameScene extends Phaser.Scene {
       callbackScope: this,
       loop: true
     });
+  }
+
+    setTimerForRewards() {
+      this.timedEvent =  this.time.addEvent({
+          delay: 10000,
+          callback: this.addReward,
+          callbackScope: this,
+          loop: true
+      });
   }
 
   private addNewWood(): void {
