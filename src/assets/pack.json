@@ -28,6 +28,15 @@
       },
       {
         "type": "image",
+        "key": "danger-fish",
+        "url": "./src/assets/images/danger-fish.png",
+        "frameConfig": {
+          "frameWidth": 226,
+          "frameHeight": 94
+        }
+      },
+      {
+        "type": "image",
         "key": "wood",
         "url": "./src/assets/images/wood.png",
         "frameConfig": {
