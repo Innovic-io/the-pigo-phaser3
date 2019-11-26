@@ -19,6 +19,16 @@
       },
       {
         "type": "image",
+        "key": "closed-eyes-piranha",
+        "url": "./src/assets/images/closed-eyes-piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "dead-piranha",
+        "url": "./src/assets/images/dead-piranha.png"
+      },
+      {
+        "type": "image",
         "key": "blue-fish",
         "url": "./src/assets/images/blue-fish.png",
         "frameConfig": {

@@ -20,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
+  private piranhaChangeImage = false;
 
   constructor() {
     super({
@@ -78,6 +79,8 @@ export class GameScene extends Phaser.Scene {
 
     this.setTimerForYellowFish();
 
+    this.changePiranhaImage();
+
   }
 
   update(): void {
@@ -126,7 +129,8 @@ export class GameScene extends Phaser.Scene {
             this.scoreText.setText(this.registry.values.score);
           }, null, this);
     } else {
-      // Phaser.Actions.Call(
+        this.piranha.setTexture('dead-piranha');
+        // Phaser.Actions.Call(
       //   this.blueFishes.getChildren(),
       //   function(blueFish) {
       //     // blueFish.body.setVelocityX(0);
@@ -147,6 +151,25 @@ export class GameScene extends Phaser.Scene {
       }
     }
   }
+
+  private changePiranhaImage() {
+      this.timedEvent =  this.time.addEvent({
+          delay: 500,
+          callback: this.togglePiranhaImage,
+          callbackScope: this,
+          loop: true
+      });
+  }
+
+    togglePiranhaImage() {
+        if (this.piranhaChangeImage) {
+            this.piranha.setTexture('closed-eyes-piranha');
+        }
+        else {
+            this.piranha.setTexture('piranha');
+        }
+        this.piranhaChangeImage = !this.piranhaChangeImage;
+    }
 
   private addNewBlueFish(): void {
     // update the score

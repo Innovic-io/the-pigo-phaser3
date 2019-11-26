@@ -64,7 +64,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     }
 
     // check if off the screen
-    if (this.y + this.height > this.scene.sys.canvas.height) {
+    if (this.y + this.height > this.scene.sys.canvas.height + 80) {
       this.isDead = true;
     }
   }
