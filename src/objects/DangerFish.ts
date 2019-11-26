@@ -3,7 +3,7 @@ export class DangerFish extends Phaser.GameObjects.Image {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
         // image
-        this.setScale(1);
+        this.setScale(0.85);
         this.setOrigin(0, 0);
 
         // physics

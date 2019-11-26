@@ -86,7 +86,9 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     if (!this.piranha.getDead()) {
       this.background.tilePositionX += 4;
-      this.piranha.update();
+        if(this.piranha.y > 20) {
+            this.piranha.update();
+        }
       this.physics.overlap(
         this.piranha,
         this.blueFishes,
@@ -117,6 +119,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.overlap(this.piranha, this.yellowFish,
           () => {
             this.registry.values.score += 1;
+            this.moveMouths();
 
             Phaser.Actions.Call(
                 this.yellowFish.getChildren(),
@@ -161,7 +164,7 @@ export class GameScene extends Phaser.Scene {
       });
   }
 
-    togglePiranhaImage() {
+  private togglePiranhaImage() {
         if (this.piranhaChangeImage) {
             this.piranha.setTexture('closed-eyes-piranha');
         }
@@ -170,6 +173,13 @@ export class GameScene extends Phaser.Scene {
         }
         this.piranhaChangeImage = !this.piranhaChangeImage;
     }
+
+   private moveMouths() {
+       this.piranha.setTexture('open-mouths-piranha');
+       setTimeout(() => {
+           this.piranha.setTexture('piranha');
+       },100)
+   }
 
   private addNewBlueFish(): void {
     // update the score

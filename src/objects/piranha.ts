@@ -22,7 +22,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // sprite
-    this.setScale(0.95);
+    this.setScale(1);
     this.setOrigin(0, 0);
 
     // variables

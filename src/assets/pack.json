@@ -24,6 +24,11 @@
       },
       {
         "type": "image",
+        "key": "open-mouths-piranha",
+        "url": "./src/assets/images/open-mouths-piranha.png"
+      },
+      {
+        "type": "image",
         "key": "dead-piranha",
         "url": "./src/assets/images/dead-piranha.png"
       },
