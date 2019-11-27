@@ -1,4 +1,5 @@
 export class StartScene extends Phaser.Scene {
+    isPlaying: boolean = false;
 
     constructor(private background: Phaser.GameObjects.TileSprite) {
         super({
@@ -7,10 +8,6 @@ export class StartScene extends Phaser.Scene {
     }
 
     preload(): void {
-        /**
-         * PRELOADER START
-         */
-
         const progressBar = this.add.graphics();
         const progressBox = this.add.graphics();
         progressBox.fillStyle(0x222222, 0.8);
@@ -50,17 +47,23 @@ export class StartScene extends Phaser.Scene {
             progressBox.destroy();
             loadingText.destroy();
             percentText.destroy();
-        });
 
-        /**
-         * PRELOADER END
-         */
+            if (!this.isPlaying) {
+                this.startAudio();
+            }
+        });
 
         this.load.pack(
             "flappyBirdPack",
             "./src/assets/pack.json",
             "flappyBirdPack"
         );
+    }
+
+    startAudio() {
+        this.isPlaying = true;
+        const music = this.sound.add('pigoLoop', { loop: true });
+        music.play();
     }
 
     create(): void {
