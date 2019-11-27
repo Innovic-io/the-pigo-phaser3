@@ -7,12 +7,13 @@
 
 import "phaser";
 import { GameScene } from "./scenes/game-scene";
+import { StartScene } from './scenes/start-scene';
 
 const config: GameConfig = {
   width: 1390,
   height: 480,
   parent: "game",
-  scene: [GameScene],
+  scene: [StartScene, GameScene],
   input: {
     keyboard: true
   },
