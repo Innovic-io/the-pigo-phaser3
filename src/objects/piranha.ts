@@ -22,7 +22,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // sprite
-    this.setScale(2);
+    this.setScale(1);
     this.setOrigin(0, 0);
 
     // variables
@@ -64,7 +64,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     }
 
     // check if off the screen
-    if (this.y + this.height > this.scene.sys.canvas.height) {
+    if (this.y + this.height > this.scene.sys.canvas.height + 80) {
       this.isDead = true;
     }
   }

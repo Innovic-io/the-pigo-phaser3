@@ -9,15 +9,31 @@ import { Piranha } from "../objects/piranha";
 import { BlueFish } from "../objects/blueFish";
 import { Wood } from "../objects/wood"
 import { YellowFish } from '../objects/YellowFish';
+import { DangerFish } from "../objects/DangerFish";
+import { WormSpeedUp } from "../objects/WormSpeedUp";
+import { WormSlowDown } from "../objects/WormSlowDown";
 
 export class GameScene extends Phaser.Scene {
-  private bird: Piranha;
+  private piranha: Piranha;
   private blueFishes: Phaser.GameObjects.Group;
+  private dangerFishes: Phaser.GameObjects.Group;
+  private speedUpWorms: Phaser.GameObjects.Group;
+  private slowDownWorms: Phaser.GameObjects.Group;
   private woods: Phaser.GameObjects.Group;
   private yellowFish: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
+  private piranhaChangeImage = false;
+  private backgroundMovementSpeed = 4;
+  private obstacleVelocities = {
+      blueFish: 500,
+      yellowFish: 400,
+      dangerFish: 1000,
+      wood: 800,
+      worms: 240
+  };
+  private speedUpBy = 300;
   private isPlaying: boolean = false;
 
   constructor() {
@@ -58,55 +74,71 @@ export class GameScene extends Phaser.Scene {
       .setDepth(2);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
+    this.dangerFishes = this.add.group({ classType: BlueFish });
+    this.speedUpWorms = this.add.group({ classType: WormSpeedUp });
+    this.slowDownWorms = this.add.group({ classType: WormSlowDown });
     this.woods = this.add.group({ classType: Wood });
     this.yellowFish = this.add.group({ classType: YellowFish });
 
-    this.bird = new Piranha({
+    this.piranha = new Piranha({
       scene: this,
       x: 50,
       y: 200,
-      key: "bird"
+      key: "piranha"
     });
 
-    // *****************************************************************
+    this.addNewBlueFish();
+
+      // *****************************************************************
     // TIMER
     // *****************************************************************
-    this.addNewBlueFish();
     this.setTimerForBlueFishes();
-
-    this.addNewWood();
+    this.setTimerForDangerFishes();
     this.setTimerForWoods();
-
-    this.addNewRowsOfYellowFish();
     this.setTimerForYellowFish();
+    this.setTimerForRewards();
+
+    this.changePiranhaImage();
 
   }
 
   update(): void {
-    if (!this.bird.getDead()) {
-      this.background.tilePositionX += 4;
-      this.bird.update();
+    if (!this.piranha.getDead()) {
+      this.background.tilePositionX += this.backgroundMovementSpeed;
+        if(this.piranha.y > 20) {
+            this.piranha.update();
+        }
       this.physics.overlap(
-        this.bird,
+        this.piranha,
         this.blueFishes,
         function() {
-          this.bird.setDead(true);
+          this.piranha.setDead(true);
         },
         null,
         this
       );
       this.physics.overlap(
-          this.bird,
+          this.piranha,
           this.woods,
           function() {
-            this.bird.setDead(true);
+            this.piranha.setDead(true);
           },
           null,
           this
       );
-      this.physics.overlap(this.bird, this.yellowFish,
+      this.physics.overlap(
+          this.piranha,
+          this.dangerFishes,
+          function() {
+              this.piranha.setDead(true);
+          },
+          null,
+          this
+      );
+      this.physics.overlap(this.piranha, this.yellowFish,
           () => {
             this.registry.values.score += 1;
+            this.moveMouths();
 
             Phaser.Actions.Call(
                 this.yellowFish.getChildren(),
@@ -118,28 +150,100 @@ export class GameScene extends Phaser.Scene {
 
             this.scoreText.setText(this.registry.values.score);
           }, null, this);
+        this.physics.overlap(this.piranha, this.speedUpWorms,
+            () => {
+                this.speedUp();
+                Phaser.Actions.Call(
+                    this.speedUpWorms.getChildren(),
+                    function(worm) {
+                        worm.destroy();
+                    },
+                    this
+                );
+            }, null, this);
     } else {
-      Phaser.Actions.Call(
-        this.blueFishes.getChildren(),
-        function(blueFish) {
-          blueFish.body.setVelocityX(0);
-        },
-        this
-      );
+        this.piranha.setTexture('dead-piranha');
 
-      Phaser.Actions.Call(
-          this.woods.getChildren(),
-          function(wood) {
-            wood.body.setVelocityX(0);
-          },
-          this
-      );
+        if(this.speedUpWorms.children.entries.length) {
+            Phaser.Actions.Call(
+                this.speedUpWorms.getChildren(),
+                function(worm) {
+                    worm.body.setVelocity(0);
+                },
+                this
+            );
+        }
+        if(this.slowDownWorms.children.entries.length) {
+            Phaser.Actions.Call(
+                this.slowDownWorms.getChildren(),
+                function(worm) {
+                    worm.body.setVelocity(0);
+                },
+                this
+            );
+        }
+        // Phaser.Actions.Call(
+      //   this.blueFishes.getChildren(),
+      //   function(blueFish) {
+      //     // blueFish.body.setVelocityX(0);
+      //   },
+      //   this
+      // );
+      //
+      // Phaser.Actions.Call(
+      //     this.woods.getChildren(),
+      //     function(wood) {
+      //       // wood.body.setVelocityX(0);
+      //     },
+      //     this
+      // );
 
-      if (this.bird.y > this.sys.canvas.height) {
+      if (this.piranha.y > this.sys.canvas.height) {
         this.scene.restart();
       }
     }
   }
+
+  private changePiranhaImage() {
+      this.timedEvent =  this.time.addEvent({
+          delay: 500,
+          callback: this.togglePiranhaImage,
+          callbackScope: this,
+          loop: true
+      });
+  }
+
+  private togglePiranhaImage() {
+        if (this.piranhaChangeImage) {
+            this.piranha.setTexture('closed-eyes-piranha');
+        }
+        else {
+            this.piranha.setTexture('piranha');
+        }
+        this.piranhaChangeImage = !this.piranhaChangeImage;
+    }
+
+   private moveMouths() {
+       this.piranha.setTexture('open-mouths-piranha');
+       setTimeout(() => {
+           this.piranha.setTexture('piranha');
+       },100)
+   }
+
+    private speedUp() {
+        this.backgroundMovementSpeed = 7;
+        this.increaseSpeedOfObstacle(this.blueFishes, 'blueFish');
+        this.increaseSpeedOfObstacle(this.yellowFish, 'yellowFish');
+        this.increaseSpeedOfObstacle(this.woods, 'wood');
+        this.increaseSpeedOfObstacle(this.dangerFishes, 'dangerFish');
+        this.increaseSpeedOfObstacle(this.speedUpWorms, 'worms');
+        this.increaseSpeedOfObstacle(this.slowDownWorms, 'worms');
+
+        setTimeout(() => {
+            this.resetObstacleVelocities();
+            this.backgroundMovementSpeed = 4;
+        }, 10000)
+    }
 
   private addNewBlueFish(): void {
     // update the score
@@ -160,8 +264,13 @@ export class GameScene extends Phaser.Scene {
     //   }
     // }
     this.addBlueFish(1400, i * 48);
-    this.resetTimer();
   }
+
+    private addNewDangerFish(): void {
+        let i = this.getRandomInt(2, 9);
+
+        this.addDangerFish(1400, i * 48);
+    }
 
   private addNewRowsOfYellowFish(): void {
     let i = this.getRandomInt(2, 9);
@@ -169,15 +278,68 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBlueFish(x: number, y: number): void {
-    // create a new pipe at the position x and y and add it to group
     this.blueFishes.add(
       new BlueFish({
         scene: this,
         x: x,
         y: y,
         key: "blue-fish"
-      })
+      },
+          this.obstacleVelocities.blueFish)
     );
+  }
+
+  private addDangerFish(x: number, y: number): void {
+      this.dangerFishes.add(
+          new DangerFish({
+              scene: this,
+              x: x,
+              y: y,
+              key: "danger-fish"
+          },
+              this.obstacleVelocities.dangerFish)
+      );
+  }
+
+    private addReward(): void {
+        const position = {
+            x: this.getRandomInt(1400, 1800),
+            y: this.getRandomInt(50, 320),
+        };
+        this.getRandomInt(0,2) ? this.addSpeedUpWorm(position) : this.addSlowDownWorm(position);
+    }
+
+    private addSpeedUpWorm(postition) {
+        this.speedUpWorms.add(
+            new WormSpeedUp({
+                scene: this,
+                x: postition.x,
+                y: postition.y,
+                key: "worm-speed-up"
+            },
+                this.obstacleVelocities.worms)
+        );
+    }
+
+    private addSlowDownWorm(position): void {
+        this.slowDownWorms.add(
+            new WormSlowDown({
+                scene: this,
+                x: position.x,
+                y: position.y,
+                key: "worm-slow-down"
+            },
+                this.obstacleVelocities.worms)
+        );
+    }
+
+  private setTimerForDangerFishes() {
+      this.timedEvent = this.time.addEvent({
+          delay: 10000,
+          callback: this.addNewDangerFish,
+          callbackScope: this,
+          loop: true
+      });
   }
 
   private addYellowFish(x: number, y: number): void {
@@ -187,13 +349,14 @@ export class GameScene extends Phaser.Scene {
           x: x,
           y: y,
           key: "yellowFish"
-        })
+        },
+            this.obstacleVelocities.yellowFish)
     );
   }
 
   private setTimerForBlueFishes() {
       this.timedEvent =  this.time.addEvent({
-      delay: 2500,
+      delay: 1000,
       callback: this.addNewBlueFish,
       callbackScope: this,
       loop: true
@@ -202,11 +365,20 @@ export class GameScene extends Phaser.Scene {
 
   private setTimerForYellowFish() {
     this.timedEvent =  this.time.addEvent({
-      delay: 5000,
+      delay: 4000,
       callback: this.addNewRowsOfYellowFish,
       callbackScope: this,
       loop: true
     });
+  }
+
+    setTimerForRewards() {
+      this.timedEvent =  this.time.addEvent({
+          delay: 10000,
+          callback: this.addReward,
+          callbackScope: this,
+          loop: true
+      });
   }
 
   private addNewWood(): void {
@@ -217,7 +389,8 @@ export class GameScene extends Phaser.Scene {
           x: 1400,
           y: 38,
           key: "wood"
-        })
+        },
+        this.obstacleVelocities.dangerFish)
     );
   }
   private setTimerForWoods() {
@@ -229,18 +402,28 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
+  private increaseSpeedOfObstacle(listOfObstacles, obstacle) {
+      const speedUpVelocity = this.obstacleVelocities[obstacle] + this.speedUpBy;
+      listOfObstacles.children.entries.forEach(obstacle => {
+          obstacle.body.setVelocity(-speedUpVelocity, 0);
+      });
+      this.obstacleVelocities[obstacle] = speedUpVelocity
+  }
+
+  private resetObstacleVelocities() {
+      this.obstacleVelocities = {
+          blueFish: 500,
+          yellowFish: 400,
+          dangerFish: 1000,
+          wood: 800,
+          worms: 240
+      };
+  }
+
   private getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
 
-  private resetTimer(): void {
-    // this.timedEvent.reset({
-    //   delay: Phaser.Math.Between(1500,5000),
-    //   callback: this.addNewRowOfPipes,
-    //   callbackScope: this,
-    //   loop: true
-    // });
-  }
 }

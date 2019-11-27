@@ -14,8 +14,23 @@
       },
       {
         "type": "image",
-        "key": "bird",
-        "url": "./src/assets/images/bird.png"
+        "key": "piranha",
+        "url": "./src/assets/images/piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "closed-eyes-piranha",
+        "url": "./src/assets/images/closed-eyes-piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "open-mouths-piranha",
+        "url": "./src/assets/images/open-mouths-piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "dead-piranha",
+        "url": "./src/assets/images/dead-piranha.png"
       },
       {
         "type": "image",
@@ -24,6 +39,15 @@
         "frameConfig": {
           "frameWidth": 20,
           "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "danger-fish",
+        "url": "./src/assets/images/danger-fish.png",
+        "frameConfig": {
+          "frameWidth": 226,
+          "frameHeight": 94
         }
       },
       {
@@ -39,6 +63,24 @@
         "type": "image",
         "key": "yellowFish",
         "url": "./src/assets/images/yellowFish.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "worm-speed-up",
+        "url": "./src/assets/images/worm-speed-up.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "worm-slow-down",
+        "url": "./src/assets/images/worm-slow-down.png",
         "frameConfig": {
           "frameWidth": 20,
           "frameHeight": 20

@@ -1,11 +1,4 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2019 Digitsensitive
- * @description  Flappy Piranha: Pipe
- * @license      Digitsensitive
- */
-
-export class YellowFish extends Phaser.GameObjects.Image {
+export class WormSpeedUp extends Phaser.GameObjects.Image {
     constructor(params, velocity) {
         super(params.scene, params.x, params.y, params.key, params.frame);
 
@@ -22,4 +15,3 @@ export class YellowFish extends Phaser.GameObjects.Image {
         this.scene.add.existing(this);
     }
 }
-
