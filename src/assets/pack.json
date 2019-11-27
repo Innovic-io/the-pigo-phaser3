@@ -14,6 +14,16 @@
       },
       {
         "type": "image",
+        "key": "background-speed-up",
+        "url": "./src/assets/images/background-speed-up.png"
+      },
+      {
+        "type": "image",
+        "key": "background-slow-down",
+        "url": "./src/assets/images/background-slow-down.png"
+      },
+      {
+        "type": "image",
         "key": "piranha",
         "url": "./src/assets/images/piranha.png"
       },
@@ -26,6 +36,16 @@
         "type": "image",
         "key": "open-mouths-piranha",
         "url": "./src/assets/images/open-mouths-piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "speed-up-piranha",
+        "url": "./src/assets/images/speed-up-piranha.png"
+      },
+      {
+        "type": "image",
+        "key": "slow-down-piranha",
+        "url": "./src/assets/images/slow-down-piranha.png"
       },
       {
         "type": "image",

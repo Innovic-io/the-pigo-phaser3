@@ -9,6 +9,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
   private isDead: boolean;
   private isFlapping: boolean;
+  inSpeed = false;
 
   public getDead(): boolean {
     return this.isDead;
@@ -16,6 +17,14 @@ export class Piranha extends Phaser.GameObjects.Sprite {
 
   public setDead(dead): void {
     this.isDead = dead;
+  }
+
+  getInSpeed() {
+    return this.inSpeed
+  }
+
+  setInSpeed(inSpeed) {
+    this.inSpeed = inSpeed;
   }
 
   constructor(params) {
