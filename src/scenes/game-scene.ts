@@ -25,6 +25,15 @@ export class GameScene extends Phaser.Scene {
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
   private piranhaChangeImage = false;
+  private backgroundMovementSpeed = 4;
+  private obstacleVelocities = {
+      blueFish: 500,
+      yellowFish: 400,
+      dangerFish: 1000,
+      wood: 800,
+      worms: 240
+  };
+  private speedUpBy = 300;
 
   constructor() {
     super({
@@ -89,7 +98,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     if (!this.piranha.getDead()) {
-      this.background.tilePositionX += 4;
+      this.background.tilePositionX += this.backgroundMovementSpeed;
         if(this.piranha.y > 20) {
             this.piranha.update();
         }
@@ -135,6 +144,17 @@ export class GameScene extends Phaser.Scene {
 
             this.scoreText.setText(this.registry.values.score);
           }, null, this);
+        this.physics.overlap(this.piranha, this.speedUpWorms,
+            () => {
+                this.speedUp();
+                Phaser.Actions.Call(
+                    this.speedUpWorms.getChildren(),
+                    function(worm) {
+                        worm.destroy();
+                    },
+                    this
+                );
+            }, null, this);
     } else {
         this.piranha.setTexture('dead-piranha');
 
@@ -204,6 +224,21 @@ export class GameScene extends Phaser.Scene {
        },100)
    }
 
+    private speedUp() {
+        this.backgroundMovementSpeed = 7;
+        this.increaseSpeedOfObstacle(this.blueFishes, 'blueFish');
+        this.increaseSpeedOfObstacle(this.yellowFish, 'yellowFish');
+        this.increaseSpeedOfObstacle(this.woods, 'wood');
+        this.increaseSpeedOfObstacle(this.dangerFishes, 'dangerFish');
+        this.increaseSpeedOfObstacle(this.speedUpWorms, 'worms');
+        this.increaseSpeedOfObstacle(this.slowDownWorms, 'worms');
+
+        setTimeout(() => {
+            this.resetObstacleVelocities();
+            this.backgroundMovementSpeed = 4;
+        }, 10000)
+    }
+
   private addNewBlueFish(): void {
     // update the score
 
@@ -237,14 +272,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   private addBlueFish(x: number, y: number): void {
-    // create a new pipe at the position x and y and add it to group
     this.blueFishes.add(
       new BlueFish({
         scene: this,
         x: x,
         y: y,
         key: "blue-fish"
-      })
+      },
+          this.obstacleVelocities.blueFish)
     );
   }
 
@@ -255,7 +290,8 @@ export class GameScene extends Phaser.Scene {
               x: x,
               y: y,
               key: "danger-fish"
-          })
+          },
+              this.obstacleVelocities.dangerFish)
       );
   }
 
@@ -274,7 +310,8 @@ export class GameScene extends Phaser.Scene {
                 x: postition.x,
                 y: postition.y,
                 key: "worm-speed-up"
-            })
+            },
+                this.obstacleVelocities.worms)
         );
     }
 
@@ -285,7 +322,8 @@ export class GameScene extends Phaser.Scene {
                 x: position.x,
                 y: position.y,
                 key: "worm-slow-down"
-            })
+            },
+                this.obstacleVelocities.worms)
         );
     }
 
@@ -305,7 +343,8 @@ export class GameScene extends Phaser.Scene {
           x: x,
           y: y,
           key: "yellowFish"
-        })
+        },
+            this.obstacleVelocities.yellowFish)
     );
   }
 
@@ -344,7 +383,8 @@ export class GameScene extends Phaser.Scene {
           x: 1400,
           y: 38,
           key: "wood"
-        })
+        },
+        this.obstacleVelocities.dangerFish)
     );
   }
   private setTimerForWoods() {
@@ -354,6 +394,24 @@ export class GameScene extends Phaser.Scene {
       callbackScope: this,
       loop: true
     });
+  }
+
+  private increaseSpeedOfObstacle(listOfObstacles, obstacle) {
+      const speedUpVelocity = this.obstacleVelocities[obstacle] + this.speedUpBy;
+      listOfObstacles.children.entries.forEach(obstacle => {
+          obstacle.body.setVelocity(-speedUpVelocity, 0);
+      });
+      this.obstacleVelocities[obstacle] = speedUpVelocity
+  }
+
+  private resetObstacleVelocities() {
+      this.obstacleVelocities = {
+          blueFish: 500,
+          yellowFish: 400,
+          dangerFish: 1000,
+          wood: 800,
+          worms: 240
+      };
   }
 
   private getRandomInt(min, max) {
