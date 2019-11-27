@@ -1,11 +1,3 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2019 Digitsensitive
- * @description  Flappy Piranha: Game Scene
- * @license      Digitsensitive
- */
-
-
 export class StartScene extends Phaser.Scene {
 
     constructor(private background: Phaser.GameObjects.TileSprite) {

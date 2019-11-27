@@ -1,7 +1,7 @@
 {
-  "name": "phaser3-flappy-bird",
+  "name": "the-pigo",
   "version": "1.0.0",
-  "description": "Repository for the Medium Tutorial: Learn to create a HTML5 Game in 5 Minutes",
+  "description": "",
   "keywords": [
     "Phaser",
     "Phaser 3",
@@ -31,15 +31,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/digitsensitive/phaser3-flappy-bird.git"
+    "url": "git+https://github.com/Innovic-io/the-pigo-phaser3"
   },
   "author": {
-    "name": "digitsensitive",
-    "email": "digit.sensitivee@gmail.com"
+    "name": "INNOVIC",
+    "email": "hello@innovic.io"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/digitsensitive/phaser3-flappy-bird/issues"
+    "url": "https://github.com/Innovic-io/the-pigo-phaser3/issues"
   },
-  "homepage": "https://github.com/digitsensitive/phaser3-flappy-bird#readme"
+  "homepage": "https://github.com/Innovic-io/the-pigo-phaser3#readme"
 }

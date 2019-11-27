@@ -1,10 +1,3 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2019 Digitsensitive
- * @description  Flappy Piranha: Game
- * @license      Digitsensitive
- */
-
 import "phaser";
 import { GameScene } from "./scenes/game-scene";
 import { StartScene } from './scenes/start-scene';
