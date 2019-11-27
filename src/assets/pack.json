@@ -43,6 +43,31 @@
           "frameWidth": 20,
           "frameHeight": 20
         }
+      },
+      {
+        "type": "image",
+        "key": "startBtn",
+        "url": "./src/assets/images/startBtn.png"
+      },
+      {
+        "type": "image",
+        "key": "volumeOn",
+        "url": "./src/assets/images/volumeOn.png"
+      },
+      {
+        "type": "image",
+        "key": "volumeOff",
+        "url": "./src/assets/images/volumeOff.png"
+      },
+      {
+        "type": "image",
+        "key": "pigoLogo",
+        "url": "./src/assets/images/pigoLogo.png"
+      },
+      {
+        "type": "audio",
+        "key": "pigoLoop",
+        "url": "./src/assets/audio/ingame_bg_amb.mp3"
       }
     ]
   }

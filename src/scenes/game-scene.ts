@@ -18,6 +18,7 @@ export class GameScene extends Phaser.Scene {
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
   private timedEvent: any;
+  private isPlaying: boolean = false;
 
   constructor() {
     super({
@@ -35,6 +36,11 @@ export class GameScene extends Phaser.Scene {
       "./src/assets/pack.json",
       "flappyBirdPack"
     );
+    if (!this.isPlaying) {
+        this.isPlaying = true;
+        const music = this.sound.add('pigoLoop', { loop: true });
+        music.play();
+    }
   }
 
   create(): void {
