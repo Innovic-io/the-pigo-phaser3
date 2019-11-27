@@ -66,8 +66,8 @@
       },
       {
         "type": "audio",
-        "key": "audioFile",
-        "url": "./src/assets/test.mp3"
+        "key": "pigoLoop",
+        "url": "./src/assets/audio/ingame_bg_amb.mp3"
       }
     ]
   }

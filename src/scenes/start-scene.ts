@@ -86,8 +86,14 @@ export class StartScene extends Phaser.Scene {
         const soundBtn = this.add.sprite(1300, 70, 'volumeOn');
         soundBtn.setInteractive();
         soundBtn.on('pointerdown', () => {
-            this.sound.mute = !this.sound.mute;
-            this.sound.mute ? soundBtn.setTexture('volumeOff') : soundBtn.setTexture('volumeOn');
+            if (this.sound.mute) {
+                this.sound.mute = false;
+                soundBtn.setTexture('volumeOn');
+                return;
+            }
+
+            this.sound.mute = true;
+            soundBtn.setTexture('volumeOff');
         });
 
         const logo = this.add.sprite(700, 170, 'pigoLogo');

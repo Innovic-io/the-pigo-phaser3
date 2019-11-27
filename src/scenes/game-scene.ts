@@ -38,7 +38,7 @@ export class GameScene extends Phaser.Scene {
     );
     if (!this.isPlaying) {
         this.isPlaying = true;
-        const music = this.sound.add('audioFile', { loop: true });
+        const music = this.sound.add('pigoLoop', { loop: true });
         music.play();
     }
   }
