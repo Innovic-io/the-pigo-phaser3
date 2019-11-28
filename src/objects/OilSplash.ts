@@ -1,3 +1,5 @@
+import { OilSplashConfigs } from "../assets/game-config";
+
 export class OilSplash extends Phaser.GameObjects.Image {
     constructor(params, velocity) {
         super(params.scene, params.x, params.y, params.key, params.frame);
@@ -26,8 +28,8 @@ export class OilSplash extends Phaser.GameObjects.Image {
                 this.setTexture('oil-stein3');
                 setTimeout(() => {
                     this.changeImage();
-                },500);
-            },500)
-        },500);
+                },OilSplashConfigs.imageChangeInterval);
+            },OilSplashConfigs.imageChangeInterval)
+        },OilSplashConfigs.imageChangeInterval);
     }
 }

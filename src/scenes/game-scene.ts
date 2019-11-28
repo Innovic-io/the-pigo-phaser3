@@ -7,6 +7,8 @@ import { WormSpeedUp } from "../objects/WormSpeedUp";
 import { WormSlowDown } from "../objects/WormSlowDown";
 import { OilSplash } from "../objects/OilSplash";
 
+import { GameConfigs } from "../assets/game-config";
+
 export class GameScene extends Phaser.Scene {
     private piranha: Piranha;
     private blueFishes: Phaser.GameObjects.Group;
@@ -18,33 +20,32 @@ export class GameScene extends Phaser.Scene {
     private yellowFishes: Phaser.GameObjects.Group;
     private background: Phaser.GameObjects.TileSprite;
     private scoreText: Phaser.GameObjects.BitmapText;
-    private timedEvent: any;
     private backgroundMovementSpeed;
     private piranhaChangeImage = false;
-    private backgroundInitialSpeed = 4;
-    private backgroundSpeedIncreaseBy = 3;
+    // private backgroundInitialSpeed = 4;
+    // private backgroundSpeedIncreaseBy = 3;
     private obstacleVelocities;
-    obstacleStartingVelocities = {
-        blueFish: 500,
-        yellowFish: 400,
-        dangerFish: 1000,
-        wood: 800,
-        worms: 240,
-        oilSplash: 240
-    };
-    gameObjectsTimers = {
-        blueFish: 1500,
-        yellowFish: 3500,
-        dangerFish: 10000,
-        wood: 4500,
-        worms: 10000,
-        oilSplash: 8000
-    };
+    // obstacleStartingVelocities = {
+    //     blueFish: 500,
+    //     yellowFish: 400,
+    //     dangerFish: 1000,
+    //     wood: 800,
+    //     worms: 240,
+    //     oilSplash: 240
+    // };
+    // gameObjectsTimers = {
+    //     blueFish: 1500,
+    //     yellowFish: 3500,
+    //     dangerFish: 10000,
+    //     wood: 4500,
+    //     worms: 10000,
+    //     oilSplash: 8000
+    // };
     gameTimeouts = [];
-    private speedUpBy = 200;
+    // private speedUpBy = 200;
     private isPlaying: boolean = false;
     private piranhaInMode = false;
-    private rewardTime = 10000;
+    // private rewardTime = 10000;
 
     constructor() {
         super({
@@ -73,8 +74,8 @@ export class GameScene extends Phaser.Scene {
         this.background = this.add
             .tileSprite(0, 0, 1390, 1600, "background")
             .setOrigin(0, 0);
-        this.backgroundMovementSpeed = this.backgroundInitialSpeed;
-        this.obstacleVelocities = {...this.obstacleStartingVelocities};
+        this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
+        this.obstacleVelocities = {...GameConfigs.obstacleStartingVelocities};
 
         this.scoreText = this.add
             .bitmapText(
@@ -169,7 +170,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     changePiranhaImage() {
-        this.timedEvent = this.time.addEvent({
+        this.time.addEvent({
             delay: 500,
             callback: this.togglePiranhaImage,
             callbackScope: this,
@@ -210,7 +211,7 @@ export class GameScene extends Phaser.Scene {
         this.gameTimeouts.push(
             setTimeout(() => {
                 this.setGameOptionsToDefault();
-            }, this.rewardTime)
+            }, GameConfigs.rewardTime)
         );
     }
 
@@ -232,7 +233,7 @@ export class GameScene extends Phaser.Scene {
                 this.registry.values.score += 10;
                 this.scoreText.setText(this.registry.values.score);
                 this.setGameOptionsToDefault();
-            }, this.rewardTime)
+            }, GameConfigs.rewardTime)
         )
     }
 
@@ -248,8 +249,8 @@ export class GameScene extends Phaser.Scene {
 
     updateBackground(backgroundKey, speedUp) {
         this.background.setTexture(backgroundKey);
-        speedUp ? this.backgroundMovementSpeed += this.backgroundSpeedIncreaseBy
-            : this.backgroundMovementSpeed -= this.backgroundSpeedIncreaseBy;
+        speedUp ? this.backgroundMovementSpeed += GameConfigs.backgroundSpeedIncreaseBy
+            : this.backgroundMovementSpeed -= GameConfigs.backgroundSpeedIncreaseBy;
         console.log(this.backgroundMovementSpeed);
     }
 
@@ -261,7 +262,7 @@ export class GameScene extends Phaser.Scene {
         this.piranha.setInSpeed(false);
         this.resetObstacleVelocities();
         this.piranhaInMode = false;
-        this.backgroundMovementSpeed = this.backgroundInitialSpeed;
+        this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
         this.background.setTexture('background');
         this.updatePiranha('piranha');
     }
@@ -346,8 +347,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     setTimerForDangerFishes() {
-        this.timedEvent = this.time.addEvent({
-            delay: this.gameObjectsTimers.dangerFish,
+        this.time.addEvent({
+            delay: GameConfigs.gameObjectsTimers.dangerFish,
             callback: this.addNewDangerFish,
             callbackScope: this,
             loop: true
@@ -367,8 +368,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     setTimerForBlueFishes() {
-        this.timedEvent = this.time.addEvent({
-            delay: this.gameObjectsTimers.blueFish,
+        this.time.addEvent({
+            delay: GameConfigs.gameObjectsTimers.blueFish,
             callback: this.addNewBlueFish,
             callbackScope: this,
             loop: true
@@ -376,8 +377,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     setTimerForYellowFish() {
-        this.timedEvent = this.time.addEvent({
-            delay: this.gameObjectsTimers.yellowFish,
+        this.time.addEvent({
+            delay: GameConfigs.gameObjectsTimers.yellowFish,
             callback: this.addNewYellowFish,
             callbackScope: this,
             loop: true
@@ -385,8 +386,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     setTimerForRewards() {
-        this.timedEvent = this.time.addEvent({
-            delay: this.gameObjectsTimers.worms,
+        this.time.addEvent({
+            delay: GameConfigs.gameObjectsTimers.worms,
             callback: this.addReward,
             callbackScope: this,
             loop: true
@@ -418,8 +419,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     setTimerForWoods() {
-        this.timedEvent = this.time.addEvent({
-            delay: this.gameObjectsTimers.wood,
+        this.time.addEvent({
+            delay: GameConfigs.gameObjectsTimers.wood,
             callback: this.addNewWood,
             callbackScope: this,
             loop: true
@@ -428,7 +429,7 @@ export class GameScene extends Phaser.Scene {
 
     setTimerForOilSplashes() {
         this.time.addEvent({
-            delay: this.gameObjectsTimers.oilSplash,
+            delay: GameConfigs.gameObjectsTimers.oilSplash,
             callback: this.addNewOilSplash,
             callbackScope: this,
             loop: true
@@ -437,8 +438,8 @@ export class GameScene extends Phaser.Scene {
 
     changeSpeedOfObstacle(listOfObstacles, obstacle, increase) {
         const speedUpVelocity = increase ?
-            this.obstacleVelocities[obstacle] + this.speedUpBy
-            : this.obstacleVelocities[obstacle] - this.speedUpBy;
+            this.obstacleVelocities[obstacle] + GameConfigs.speedUpBy
+            : this.obstacleVelocities[obstacle] - GameConfigs.speedUpBy;
         listOfObstacles.children.entries.forEach(obstacle => {
             obstacle.body.setVelocity(-speedUpVelocity, 0);
         });
@@ -519,28 +520,28 @@ export class GameScene extends Phaser.Scene {
     }
 
     private resetObstacleVelocities() {
-        this.obstacleVelocities = {...this.obstacleStartingVelocities};
+        this.obstacleVelocities = {...GameConfigs.obstacleStartingVelocities};
 
         this.blueFishes.children.entries.forEach(fish => {
-            fish.body.setVelocity(-this.obstacleStartingVelocities.blueFish, 0);
+            fish.body.setVelocity(-GameConfigs.obstacleStartingVelocities.blueFish, 0);
         });
         this.yellowFishes.children.entries.forEach(fish => {
-            fish.body.setVelocity(-this.obstacleStartingVelocities.yellowFish, 0);
+            fish.body.setVelocity(-GameConfigs.obstacleStartingVelocities.yellowFish, 0);
         });
         this.dangerFishes.children.entries.forEach(fish => {
-            fish.body.setVelocity(-this.obstacleStartingVelocities.dangerFish, 0);
+            fish.body.setVelocity(-GameConfigs.obstacleStartingVelocities.dangerFish, 0);
         });
         this.woods.children.entries.forEach(wood => {
-            wood.body.setVelocity(-this.obstacleStartingVelocities.wood, 0);
+            wood.body.setVelocity(-GameConfigs.obstacleStartingVelocities.wood, 0);
         });
         this.oilSplashes.children.entries.forEach(oilSplash => {
-            oilSplash.body.setVelocity(-this.obstacleStartingVelocities.oilSplash, 0);
+            oilSplash.body.setVelocity(-GameConfigs.obstacleStartingVelocities.oilSplash, 0);
         });
         this.slowDownWorms.children.entries.forEach(worm => {
-            worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
+            worm.body.setVelocity(-GameConfigs.obstacleStartingVelocities.worms, 0);
         });
         this.speedUpWorms.children.entries.forEach(worm => {
-            worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
+            worm.body.setVelocity(-GameConfigs.obstacleStartingVelocities.worms, 0);
         });
     }
 
