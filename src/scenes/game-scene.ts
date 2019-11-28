@@ -30,84 +30,85 @@ export class GameScene extends Phaser.Scene {
         worms: 240
     };
     gameObjectsTimers = {
-        blueFish: 2000,
+        blueFish: 1500,
         yellowFish: 3500,
         dangerFish: 10000,
         wood: 4500,
         worms: 10000
     };
+    gameTimeouts = [];
     private speedUpBy = 200;
     private isPlaying: boolean = false;
     private piranhaInMode = false;
     private rewardTime = 10000;
 
-  constructor() {
-    super({
-      key: "GameScene"
-    });
-  }
-
-  init(): void {
-    this.registry.set("score", 0);
-  }
-
-  preload(): void {
-    this.load.pack(
-      "flappyBirdPack",
-      "./src/assets/pack.json",
-      "flappyBirdPack"
-    );
-    if (!this.isPlaying) {
-        this.isPlaying = true;
-        const music = this.sound.add('pigoLoop', { loop: true });
-        music.play();
+    constructor() {
+        super({
+            key: "GameScene"
+        });
     }
-  }
 
-  create(): void {
-    this.background = this.add
-      .tileSprite(0, 0, 1390, 1600, "background")
-      .setOrigin(0, 0);
-    this.backgroundMovementSpeed = this.backgroundInitialSpeed;
-    this.obstacleVelocities = {...this.obstacleStartingVelocities};
+    init(): void {
+        this.registry.set("score", 0);
+    }
 
-      this.scoreText = this.add
-      .bitmapText(
-        this.sys.canvas.width / 2 - 14,
-        30,
-        "font",
-        this.registry.values.score
-      )
-      .setDepth(2);
+    preload(): void {
+        this.load.pack(
+            "flappyBirdPack",
+            "./src/assets/pack.json",
+            "flappyBirdPack"
+        );
+        if (!this.isPlaying) {
+            this.isPlaying = true;
+            const music = this.sound.add('pigoLoop', {loop: true});
+            music.play();
+        }
+    }
 
-    this.blueFishes = this.add.group({ classType: BlueFish });
-    this.dangerFishes = this.add.group({ classType: BlueFish });
-    this.speedUpWorms = this.add.group({ classType: WormSpeedUp });
-    this.slowDownWorms = this.add.group({ classType: WormSlowDown });
-    this.woods = this.add.group({ classType: Wood });
-    this.yellowFishes = this.add.group({ classType: YellowFish });
+    create(): void {
+        this.background = this.add
+            .tileSprite(0, 0, 1390, 1600, "background")
+            .setOrigin(0, 0);
+        this.backgroundMovementSpeed = this.backgroundInitialSpeed;
+        this.obstacleVelocities = {...this.obstacleStartingVelocities};
 
-    this.piranha = new Piranha({
-      scene: this,
-      x: 50,
-      y: 200,
-      key: "piranha"
-    });
+        this.scoreText = this.add
+            .bitmapText(
+                this.sys.canvas.width / 2 - 14,
+                30,
+                "font",
+                this.registry.values.score
+            )
+            .setDepth(2);
 
-    this.addNewBlueFish();
+        this.blueFishes = this.add.group({classType: BlueFish});
+        this.dangerFishes = this.add.group({classType: BlueFish});
+        this.speedUpWorms = this.add.group({classType: WormSpeedUp});
+        this.slowDownWorms = this.add.group({classType: WormSlowDown});
+        this.woods = this.add.group({classType: Wood});
+        this.yellowFishes = this.add.group({classType: YellowFish});
 
-      // *****************************************************************
-    // TIMER
-    // *****************************************************************
-    this.setTimerForBlueFishes();
-    this.setTimerForDangerFishes();
-    this.setTimerForWoods();
-    this.setTimerForYellowFish();
-    this.setTimerForRewards();
+        this.piranha = new Piranha({
+            scene: this,
+            x: 50,
+            y: 200,
+            key: "piranha"
+        });
 
-    this.changePiranhaImage();
+        this.addNewBlueFish();
 
-  }
+        // *****************************************************************
+        // TIMER
+        // *****************************************************************
+        this.setTimerForBlueFishes();
+        this.setTimerForDangerFishes();
+        this.setTimerForWoods();
+        this.setTimerForYellowFish();
+        this.setTimerForRewards();
+
+        this.changePiranhaImage();
+
+    }
 
     update(): void {
         if (!this.piranha.getDead()) {
@@ -118,6 +119,7 @@ export class GameScene extends Phaser.Scene {
             this.detectCollisions();
         } else {
             this.piranha.setTexture('dead-piranha');
+            this.clearTimeoutsValues();
 
             if (this.speedUpWorms.children.entries.length) {
                 Phaser.Actions.Call(
@@ -154,6 +156,7 @@ export class GameScene extends Phaser.Scene {
             // );
 
             if (this.piranha.y > this.sys.canvas.height) {
+                this.setGameOptionsToDefault();
                 this.scene.restart();
             }
         }
@@ -184,10 +187,9 @@ export class GameScene extends Phaser.Scene {
         this.piranha.setTexture('open-mouths-piranha');
         setTimeout(() => {
             this.piranha.setTexture('piranha');
-        }, 100)
+        }, 100);
     }
     slowDown() {
-        // this.piranha.setInSpeed(true);
         this.piranhaInMode = true;
         this.updateBackground('background-slow-down', false);
         this.updatePiranha('slow-down-piranha');
@@ -199,9 +201,11 @@ export class GameScene extends Phaser.Scene {
             },
             this
         );
-        setTimeout(()=> {
-            this.setGameOptionsToDefault();
-        }, this.rewardTime);
+        this.gameTimeouts.push(
+            setTimeout(() => {
+                this.setGameOptionsToDefault();
+            }, this.rewardTime)
+        );
     }
 
     speedUp() {
@@ -217,9 +221,13 @@ export class GameScene extends Phaser.Scene {
             },
             this
         );
-        setTimeout(()=> {
-            this.setGameOptionsToDefault();
-        }, this.rewardTime);
+        this.gameTimeouts.push(
+            setTimeout(() => {
+                this.registry.values.score += 10;
+                this.scoreText.setText(this.registry.values.score);
+                this.setGameOptionsToDefault();
+            }, this.rewardTime)
+        )
     }
 
     increaseObstaclesSpeeds(increase) {
@@ -464,33 +472,37 @@ export class GameScene extends Phaser.Scene {
         this.scoreText.setText(this.registry.values.score);
     }
 
-  private resetObstacleVelocities() {
-      this.obstacleVelocities = {...this.obstacleStartingVelocities};
+    private resetObstacleVelocities() {
+        this.obstacleVelocities = {...this.obstacleStartingVelocities};
 
-      this.blueFishes.children.entries.forEach(fish => {
-          fish.body.setVelocity(-this.obstacleStartingVelocities.blueFish, 0);
-      });
-      this.yellowFishes.children.entries.forEach(fish => {
-          fish.body.setVelocity(-this.obstacleStartingVelocities.yellowFish, 0);
-      });
-      this.dangerFishes.children.entries.forEach(fish => {
-          fish.body.setVelocity(-this.obstacleStartingVelocities.dangerFish, 0);
-      });
-      this.woods.children.entries.forEach(wood => {
-          wood.body.setVelocity(-this.obstacleStartingVelocities.wood, 0);
-      });
-      this.slowDownWorms.children.entries.forEach(worm => {
-          worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
-      });
-      this.speedUpWorms.children.entries.forEach(worm => {
-          worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
-      });
-  }
+        this.blueFishes.children.entries.forEach(fish => {
+            fish.body.setVelocity(-this.obstacleStartingVelocities.blueFish, 0);
+        });
+        this.yellowFishes.children.entries.forEach(fish => {
+            fish.body.setVelocity(-this.obstacleStartingVelocities.yellowFish, 0);
+        });
+        this.dangerFishes.children.entries.forEach(fish => {
+            fish.body.setVelocity(-this.obstacleStartingVelocities.dangerFish, 0);
+        });
+        this.woods.children.entries.forEach(wood => {
+            wood.body.setVelocity(-this.obstacleStartingVelocities.wood, 0);
+        });
+        this.slowDownWorms.children.entries.forEach(worm => {
+            worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
+        });
+        this.speedUpWorms.children.entries.forEach(worm => {
+            worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);
+        });
+    }
 
-  private getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-  }
+    clearTimeoutsValues() {
+        this.gameTimeouts.forEach(timeout => window.clearTimeout(timeout));
+    }
+
+    private getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
 
 }

@@ -10,6 +10,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   private isDead: boolean;
   private isFlapping: boolean;
   inSpeed = false;
+  velocity = 400;
 
   public getDead(): boolean {
     return this.isDead;
@@ -61,7 +62,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     if (this.jumpKey.isDown && !this.isFlapping) {
       // flap
       this.isFlapping = true;
-      this.body.setVelocityY(-350);
+      this.body.setVelocityY(-this.velocity);
       this.scene.tweens.add({
         targets: this,
         // props: { angle: -20 },
