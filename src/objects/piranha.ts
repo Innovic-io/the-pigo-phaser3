@@ -1,4 +1,4 @@
-import { PiranhaConfig } from "../assets/game-config";
+import { PiranhaConfig } from '../assets/game-config';
 
 export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
@@ -15,7 +15,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   }
 
   getInSpeed() {
-    return this.inSpeed
+    return this.inSpeed;
   }
 
   setInSpeed(inSpeed) {
@@ -61,7 +61,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
         targets: this,
         // props: { angle: -20 },
         duration: 150,
-        ease: "Power0"
+        ease: 'Power0'
       });
     } else if (this.jumpKey.isUp && this.isFlapping) {
       this.isFlapping = false;

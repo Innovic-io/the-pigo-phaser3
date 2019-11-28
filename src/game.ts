@@ -1,17 +1,17 @@
-import "phaser";
-import { GameScene } from "./scenes/game-scene";
+import 'phaser';
+import { GameScene } from './scenes/game-scene';
 import { StartScene } from './scenes/start-scene';
 
 const config: GameConfig = {
   width: 1390,
   height: 480,
-  parent: "game",
+  parent: 'game',
   scene: [StartScene, GameScene],
   input: {
     keyboard: true
   },
   physics: {
-    default: "arcade",
+    default: 'arcade',
     arcade: {
       gravity: { y: 300 }
     }
@@ -25,6 +25,6 @@ export class Game extends Phaser.Game {
   }
 }
 
-window.addEventListener("load", () => {
+window.addEventListener('load', () => {
   let game = new Game(config);
 });
