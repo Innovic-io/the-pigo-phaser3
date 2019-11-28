@@ -5,6 +5,7 @@ import { YellowFish } from '../objects/YellowFish';
 import { DangerFish } from "../objects/DangerFish";
 import { WormSpeedUp } from "../objects/WormSpeedUp";
 import { WormSlowDown } from "../objects/WormSlowDown";
+import { OilSplash } from "../objects/OilSplash";
 
 export class GameScene extends Phaser.Scene {
     private piranha: Piranha;
@@ -13,6 +14,7 @@ export class GameScene extends Phaser.Scene {
     private speedUpWorms: Phaser.GameObjects.Group;
     private slowDownWorms: Phaser.GameObjects.Group;
     private woods: Phaser.GameObjects.Group;
+    oilSplashes: Phaser.GameObjects.Group;
     private yellowFishes: Phaser.GameObjects.Group;
     private background: Phaser.GameObjects.TileSprite;
     private scoreText: Phaser.GameObjects.BitmapText;
@@ -27,14 +29,16 @@ export class GameScene extends Phaser.Scene {
         yellowFish: 400,
         dangerFish: 1000,
         wood: 800,
-        worms: 240
+        worms: 240,
+        oilSplash: 240
     };
     gameObjectsTimers = {
         blueFish: 1500,
         yellowFish: 3500,
         dangerFish: 10000,
         wood: 4500,
-        worms: 10000
+        worms: 10000,
+        oilSplash: 8000
     };
     gameTimeouts = [];
     private speedUpBy = 200;
@@ -86,6 +90,7 @@ export class GameScene extends Phaser.Scene {
         this.speedUpWorms = this.add.group({classType: WormSpeedUp});
         this.slowDownWorms = this.add.group({classType: WormSlowDown});
         this.woods = this.add.group({classType: Wood});
+        this.oilSplashes = this.add.group({classType: OilSplash});
         this.yellowFishes = this.add.group({classType: YellowFish});
 
         this.piranha = new Piranha({
@@ -105,6 +110,7 @@ export class GameScene extends Phaser.Scene {
         this.setTimerForWoods();
         this.setTimerForYellowFish();
         this.setTimerForRewards();
+        this.setTimerForOilSplashes();
 
         this.changePiranhaImage();
 
@@ -234,6 +240,7 @@ export class GameScene extends Phaser.Scene {
         this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', increase);
         this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', increase);
         this.changeSpeedOfObstacle(this.woods, 'wood', increase);
+        this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', increase);
         this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', increase);
         this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', increase);
         this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', increase);
@@ -272,6 +279,11 @@ export class GameScene extends Phaser.Scene {
     addNewYellowFish(): void {
         let i = this.getRandomInt(2, 9);
         this.addYellowFish(1400, i * 48);
+    }
+
+    addNewOilSplash(): void {
+        let i = this.getRandomInt(2, 7);
+        this.addOilSplash(1400, i * 48);
     }
 
     addBlueFish(x: number, y: number): void {
@@ -381,7 +393,7 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    addNewWood(): void {
+    addNewWood() {
         this.woods.add(
             new Wood({
                     scene: this,
@@ -389,7 +401,19 @@ export class GameScene extends Phaser.Scene {
                     y: 38,
                     key: "wood"
                 },
-                this.obstacleVelocities.dangerFish)
+                this.obstacleVelocities.wood)
+        );
+    }
+
+    addOilSplash(x, y) {
+        this.oilSplashes.add(
+            new OilSplash({
+                    scene: this,
+                    x: x,
+                    y: y,
+                    key: "oil-stein1"
+                },
+                this.obstacleVelocities.oilSplash)
         );
     }
 
@@ -397,6 +421,15 @@ export class GameScene extends Phaser.Scene {
         this.timedEvent = this.time.addEvent({
             delay: this.gameObjectsTimers.wood,
             callback: this.addNewWood,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    setTimerForOilSplashes() {
+        this.time.addEvent({
+            delay: this.gameObjectsTimers.oilSplash,
+            callback: this.addNewOilSplash,
             callbackScope: this,
             loop: true
         });
@@ -427,6 +460,16 @@ export class GameScene extends Phaser.Scene {
             this.piranha,
             this.woods,
             function () {
+                this.piranha.setDead(true);
+            },
+            null,
+            this
+        );
+
+        this.physics.overlap(
+            this.piranha,
+            this.oilSplashes,
+            () => {
                 this.piranha.setDead(true);
             },
             null,
@@ -489,6 +532,9 @@ export class GameScene extends Phaser.Scene {
         });
         this.woods.children.entries.forEach(wood => {
             wood.body.setVelocity(-this.obstacleStartingVelocities.wood, 0);
+        });
+        this.oilSplashes.children.entries.forEach(oilSplash => {
+            oilSplash.body.setVelocity(-this.obstacleStartingVelocities.oilSplash, 0);
         });
         this.slowDownWorms.children.entries.forEach(worm => {
             worm.body.setVelocity(-this.obstacleStartingVelocities.worms, 0);

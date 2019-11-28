@@ -108,6 +108,33 @@
       },
       {
         "type": "image",
+        "key": "oil-stein1",
+        "url": "./src/assets/images/oil_stein1.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "oil-stein2",
+        "url": "./src/assets/images/oil_stein2.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
+        "key": "oil-stein3",
+        "url": "./src/assets/images/oil_stein3.png",
+        "frameConfig": {
+          "frameWidth": 20,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "image",
         "key": "startBtn",
         "url": "./src/assets/images/startBtn.png"
       },
