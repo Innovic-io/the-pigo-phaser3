@@ -1,14 +1,10 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2019 Digitsensitive
- * @description  Flappy Piranha: Piranha
- * @license      Digitsensitive
- */
+import { PiranhaConfig } from "../assets/game-config";
 
 export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
   private isDead: boolean;
   private isFlapping: boolean;
+  inSpeed = false;
 
   public getDead(): boolean {
     return this.isDead;
@@ -16,6 +12,14 @@ export class Piranha extends Phaser.GameObjects.Sprite {
 
   public setDead(dead): void {
     this.isDead = dead;
+  }
+
+  getInSpeed() {
+    return this.inSpeed
+  }
+
+  setInSpeed(inSpeed) {
+    this.inSpeed = inSpeed;
   }
 
   constructor(params) {
@@ -52,7 +56,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     if (this.jumpKey.isDown && !this.isFlapping) {
       // flap
       this.isFlapping = true;
-      this.body.setVelocityY(-350);
+      this.body.setVelocityY(-PiranhaConfig.velocity);
       this.scene.tweens.add({
         targets: this,
         // props: { angle: -20 },
