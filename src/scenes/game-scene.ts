@@ -299,6 +299,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     addReward(): void {
+        if(this.piranhaInMode) {
+            return;
+        }
         const position = {
             x: this.getRandomInt(1400, 1800),
             y: this.getRandomInt(50, 320),
