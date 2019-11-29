@@ -47,10 +47,6 @@ export class StartScene extends Phaser.Scene {
       progressBox.destroy();
       loadingText.destroy();
       percentText.destroy();
-
-      if (!this.isPlaying) {
-        this.startAudio();
-      }
     });
 
     this.load.pack(
@@ -58,12 +54,6 @@ export class StartScene extends Phaser.Scene {
       './src/assets/pack.json',
       'flappyBirdPack'
     );
-  }
-
-  startAudio() {
-    this.isPlaying = true;
-    const music = this.sound.add('pigoLoop', { loop: true });
-    music.play();
   }
 
   create(): void {
