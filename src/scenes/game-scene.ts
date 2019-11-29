@@ -20,6 +20,7 @@ export class GameScene extends Phaser.Scene {
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
+  private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
   private  obstacleVelocities;
@@ -91,7 +92,7 @@ export class GameScene extends Phaser.Scene {
       y: 200,
       key: 'piranha'
     });
-        this.piranha.jump();
+    this.piranha.jump();
 
     this.addNewBlueFish();
 
@@ -182,6 +183,7 @@ export class GameScene extends Phaser.Scene {
     this.gameTimeouts.push(
       setTimeout(() => {
         this.registry.values.score += 10;
+        this.addBonusText();
         this.scoreText.setText(this.registry.values.score);
         this.setGameOptionsToDefault();
       }, GameConfigs.rewardTime)
@@ -469,6 +471,25 @@ export class GameScene extends Phaser.Scene {
     fish.destroy();
 
     this.scoreText.setText(this.registry.values.score);
+  }
+
+  addBonusText() {
+    this.bonusPointsText = this.add
+      .text(
+        this.piranha.x+5,
+        this.piranha.y-5,
+        '+10',
+        {
+          fontSize: 40,
+          fontFamily: 'Brush Script MT',
+          color: '#000'
+        }
+      )
+      .setDepth(2);
+    this.gameTimeouts.push(setTimeout(() => {
+      this.bonusPointsText.destroy();
+    },500)
+    )
   }
 
   endGame() {
