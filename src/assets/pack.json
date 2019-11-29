@@ -162,6 +162,16 @@
         "type": "audio",
         "key": "pigoLoop",
         "url": "./src/assets/audio/ingame_bg_amb.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "eatFish",
+        "url": "./src/assets/audio/eat_fish.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "pigoDeath",
+        "url": "./src/assets/audio/pigo_death.mp3"
       }
     ]
   }

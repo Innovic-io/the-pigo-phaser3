@@ -22,9 +22,12 @@ export class GameScene extends Phaser.Scene {
   private scoreText: Phaser.GameObjects.BitmapText;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
-   private  obstacleVelocities;
+  private  obstacleVelocities;
 
   gameTimeouts = [];
+  eatFishSound;
+  deathSound;
+  playDeathSoundExecuted = false;
 
   private isPlaying: boolean = false;
   private piranhaInMode = false;
@@ -51,6 +54,9 @@ export class GameScene extends Phaser.Scene {
       this.isPlaying = true;
       const music = this.sound.add('pigoLoop', { loop: true });
       music.play();
+
+      this.eatFishSound = this.sound.add('eatFish', { loop: false });
+      this.deathSound = this.sound.add('pigoDeath', { loop: false });
     }
   }
 
@@ -60,6 +66,7 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0, 0);
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
+    this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
       .bitmapText(
@@ -110,47 +117,7 @@ export class GameScene extends Phaser.Scene {
       }
       this.detectCollisions();
     } else {
-      this.piranha.setTexture('dead-piranha');
-      this.clearTimeoutsValues();
-
-      if (this.speedUpWorms.children.entries.length) {
-        Phaser.Actions.Call(
-          this.speedUpWorms.getChildren(),
-          function (worm) {
-            worm.body.setVelocity(0);
-          },
-          this
-        );
-      }
-      if (this.slowDownWorms.children.entries.length) {
-        Phaser.Actions.Call(
-          this.slowDownWorms.getChildren(),
-          function (worm) {
-            worm.body.setVelocity(0);
-          },
-          this
-        );
-      }
-      // Phaser.Actions.Call(
-      //   this.blueFishes.getChildren(),
-      //   function(blueFish) {
-      //     // blueFish.body.setVelocityX(0);
-      //   },
-      //   this
-      // );
-      //
-      // Phaser.Actions.Call(
-      //     this.woods.getChildren(),
-      //     function(wood) {
-      //       // wood.body.setVelocityX(0);
-      //     },
-      //     this
-      // );
-
-      if (this.piranha.y > this.sys.canvas.height) {
-        this.setGameOptionsToDefault();
-        this.scene.start('BeginScene');
-      }
+      this.endGame();
     }
   }
 
@@ -496,11 +463,46 @@ export class GameScene extends Phaser.Scene {
   }
 
   eatFish(fish) {
+    this.eatFishSound.play();
     this.registry.values.score++;
     this.moveMouths();
     fish.destroy();
 
     this.scoreText.setText(this.registry.values.score);
+  }
+
+  endGame() {
+    this.piranha.setTexture('dead-piranha');
+    this.clearTimeoutsValues();
+    if (!this.playDeathSoundExecuted) {
+      this.deathSound.play();
+      this.playDeathSoundExecuted = true;
+    }
+    // this.deathSound = null;
+
+    if (this.speedUpWorms.children.entries.length) {
+      Phaser.Actions.Call(
+        this.speedUpWorms.getChildren(),
+        function (worm) {
+          worm.body.setVelocity(0);
+        },
+        this
+      );
+    }
+    if (this.slowDownWorms.children.entries.length) {
+      Phaser.Actions.Call(
+        this.slowDownWorms.getChildren(),
+        function (worm) {
+          worm.body.setVelocity(0);
+        },
+        this
+      );
+    }
+
+    if (this.piranha.y > this.sys.canvas.height) {
+      this.setGameOptionsToDefault();
+      this.scene.start('BeginScene');
+    }
   }
 
   private resetObstacleVelocities() {
