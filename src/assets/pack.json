@@ -154,9 +154,24 @@
         "url": "./src/assets/images/pigoLogo.png"
       },
       {
+        "type": "image",
+        "key": "startGame",
+        "url": "./src/assets/images/press-to-start.png"
+      },
+      {
         "type": "audio",
         "key": "pigoLoop",
         "url": "./src/assets/audio/ingame_bg_amb.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "eatFish",
+        "url": "./src/assets/audio/eat_fish.mp3"
+      },
+      {
+        "type": "audio",
+        "key": "pigoDeath",
+        "url": "./src/assets/audio/pigo_death.mp3"
       }
     ]
   }

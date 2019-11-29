@@ -18,16 +18,22 @@ export class OilSplash extends Phaser.GameObjects.Image {
   }
 
   public changeImage() {
-    this.setTexture('oil-stein1');
+    this.setTextureOfOilStein('oil-stein1');
     setTimeout(() => {
-      this.setTexture('oil-stein2');
+      this.setTextureOfOilStein('oil-stein2');
       setTimeout(() => {
-        // debugger;
-        this.setTexture('oil-stein3');
+
+        this.setTextureOfOilStein('oil-stein3');
         setTimeout(() => {
           this.changeImage();
         }, OilSplashConfigs.imageChangeInterval);
       }, OilSplashConfigs.imageChangeInterval);
     }, OilSplashConfigs.imageChangeInterval);
   }
+  setTextureOfOilStein(textureKey) {
+        if(!this.scene){
+            return;
+        }
+        this.setTexture(textureKey);
+    }
 }

@@ -1,4 +1,4 @@
-import { PiranhaConfig } from '../assets/game-config';
+import { GameConfigs, PiranhaConfig } from '../assets/game-config';
 
 export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
@@ -47,29 +47,20 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    // handle angle change
-    // if (this.angle < 30) {
-    //   this.angle += 2;
-    // }
-
-    // handle input
     if (this.jumpKey.isDown && !this.isFlapping) {
-      // flap
       this.isFlapping = true;
-      this.body.setVelocityY(-PiranhaConfig.velocity);
-      this.scene.tweens.add({
-        targets: this,
-        // props: { angle: -20 },
-        duration: 150,
-        ease: 'Power0'
-      });
+      this.jump();
     } else if (this.jumpKey.isUp && this.isFlapping) {
       this.isFlapping = false;
     }
 
     // check if off the screen
-    if (this.y + this.height > this.scene.sys.canvas.height + 80) {
+    if (this.y + this.height > this.scene.sys.canvas.height + GameConfigs.allowedSpaceBelowCanvas) {
       this.isDead = true;
     }
+  }
+
+  jump() {
+    this.body.setVelocityY(-PiranhaConfig.velocity);
   }
 }

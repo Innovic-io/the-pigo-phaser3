@@ -7,7 +7,7 @@ import { WormSpeedUp } from '../objects/WormSpeedUp';
 import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
-import { GameConfigs } from '../assets/game-config';
+import { GameConfigs, TextConfig } from '../assets/game-config';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -20,33 +20,18 @@ export class GameScene extends Phaser.Scene {
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.BitmapText;
+  private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
-  // private backgroundInitialSpeed = 4;
-  // private backgroundSpeedIncreaseBy = 3;
-  private obstacleVelocities;
-  // obstacleStartingVelocities = {
-  //     blueFish: 500,
-  //     yellowFish: 400,
-  //     dangerFish: 1000,
-  //     wood: 800,
-  //     worms: 240,
-  //     oilSplash: 240
-  // };
-  // gameObjectsTimers = {
-  //     blueFish: 1500,
-  //     yellowFish: 3500,
-  //     dangerFish: 10000,
-  //     wood: 4500,
-  //     worms: 10000,
-  //     oilSplash: 8000
-  // };
+  private  obstacleVelocities;
+
   gameTimeouts = [];
-  // private speedUpBy = 200;
+  eatFishSound;
+  deathSound;
+  playDeathSoundExecuted = false;
+
   private isPlaying: boolean = false;
   private piranhaInMode = false;
-
-  // private rewardTime = 10000;
 
   constructor() {
     super({
@@ -70,6 +55,9 @@ export class GameScene extends Phaser.Scene {
       this.isPlaying = true;
       const music = this.sound.add('pigoLoop', { loop: true });
       music.play();
+
+      this.eatFishSound = this.sound.add('eatFish', { loop: false });
+      this.deathSound = this.sound.add('pigoDeath', { loop: false });
     }
   }
 
@@ -79,6 +67,7 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0, 0);
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
+    this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
       .bitmapText(
@@ -103,6 +92,7 @@ export class GameScene extends Phaser.Scene {
       y: 200,
       key: 'piranha'
     });
+    this.piranha.jump();
 
     this.addNewBlueFish();
 
@@ -128,47 +118,7 @@ export class GameScene extends Phaser.Scene {
       }
       this.detectCollisions();
     } else {
-      this.piranha.setTexture('dead-piranha');
-      this.clearTimeoutsValues();
-
-      if (this.speedUpWorms.children.entries.length) {
-        Phaser.Actions.Call(
-          this.speedUpWorms.getChildren(),
-          function (worm) {
-            worm.body.setVelocity(0);
-          },
-          this
-        );
-      }
-      if (this.slowDownWorms.children.entries.length) {
-        Phaser.Actions.Call(
-          this.slowDownWorms.getChildren(),
-          function (worm) {
-            worm.body.setVelocity(0);
-          },
-          this
-        );
-      }
-      // Phaser.Actions.Call(
-      //   this.blueFishes.getChildren(),
-      //   function(blueFish) {
-      //     // blueFish.body.setVelocityX(0);
-      //   },
-      //   this
-      // );
-      //
-      // Phaser.Actions.Call(
-      //     this.woods.getChildren(),
-      //     function(wood) {
-      //       // wood.body.setVelocityX(0);
-      //     },
-      //     this
-      // );
-
-      if (this.piranha.y > this.sys.canvas.height) {
-        this.setGameOptionsToDefault();
-        this.scene.restart();
-      }
+      this.endGame();
     }
   }
 
@@ -204,7 +154,7 @@ export class GameScene extends Phaser.Scene {
     this.piranhaInMode = true;
     this.updateBackground('background-slow-down', false);
     this.updatePiranha('slow-down-piranha');
-    this.increaseObstaclesSpeeds(false);
+    this.decreaseObstaclesSpeeds(GameConfigs.slowDownBy);
     Phaser.Actions.Call(
       this.slowDownWorms.getChildren(),
       (worm) => worm.destroy(),
@@ -222,7 +172,7 @@ export class GameScene extends Phaser.Scene {
     this.piranhaInMode = true;
     this.updateBackground('background-speed-up', true);
     this.updatePiranha('speed-up-piranha');
-    this.increaseObstaclesSpeeds(true);
+    this.increaseObstaclesSpeeds(GameConfigs.speedUpBy);
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
       function (worm) {
@@ -233,27 +183,37 @@ export class GameScene extends Phaser.Scene {
     this.gameTimeouts.push(
       setTimeout(() => {
         this.registry.values.score += 10;
+        this.addBonusText();
         this.scoreText.setText(this.registry.values.score);
         this.setGameOptionsToDefault();
       }, GameConfigs.rewardTime)
     );
   }
 
-  increaseObstaclesSpeeds(increase) {
-    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', increase);
-    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', increase);
-    this.changeSpeedOfObstacle(this.woods, 'wood', increase);
-    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', increase);
-    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', increase);
-    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', increase);
-    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', increase);
+  increaseObstaclesSpeeds(speedUpBy) {
+    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.woods, 'wood', speedUpBy);
+    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', speedUpBy);
+    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', speedUpBy);
+    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', speedUpBy);
+  }
+
+  decreaseObstaclesSpeeds(slowDownBy) {
+    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.woods, 'wood', slowDownBy);
+    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', slowDownBy);
+    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', slowDownBy);
+    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', slowDownBy);
   }
 
   updateBackground(backgroundKey, speedUp) {
     this.background.setTexture(backgroundKey);
     speedUp ? this.backgroundMovementSpeed += GameConfigs.backgroundSpeedIncreaseBy
-      : this.backgroundMovementSpeed -= GameConfigs.backgroundSpeedIncreaseBy;
-    console.log(this.backgroundMovementSpeed);
+      : this.backgroundMovementSpeed -= GameConfigs.backgroundSpeedDecreaseBy;
   }
 
   updatePiranha(piranha) {
@@ -438,10 +398,8 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  changeSpeedOfObstacle(listOfObstacles, obstacle, increase) {
-    const speedUpVelocity = increase ?
-      this.obstacleVelocities[obstacle] + GameConfigs.speedUpBy
-      : this.obstacleVelocities[obstacle] - GameConfigs.speedUpBy;
+  changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
+    const speedUpVelocity = this.obstacleVelocities[obstacle] + increaseBy;
     listOfObstacles.children.entries.forEach(obstacle => {
       obstacle.body.setVelocity(-speedUpVelocity, 0);
     });
@@ -514,11 +472,70 @@ export class GameScene extends Phaser.Scene {
   }
 
   eatFish(fish) {
+    this.eatFishSound.play();
     this.registry.values.score++;
     this.moveMouths();
     fish.destroy();
 
     this.scoreText.setText(this.registry.values.score);
+  }
+
+  addBonusText() {
+    this.bonusPointsText = this.add
+      .text(
+        this.piranha.x+10,
+        this.piranha.y-10,
+        '+10',
+        TextConfig.bonus10PtsStyle
+      )
+      .setDepth(2);
+    this.gameTimeouts.push(setTimeout(() => {
+      this.bonusPointsText.destroy();
+    },GameConfigs.bonus10PtsDuration)
+    )
+  }
+
+  endGame() {
+    this.piranha.setTexture('dead-piranha');
+    this.clearTimeoutsValues();
+    if (!this.playDeathSoundExecuted) {
+      this.deathSound.play();
+      this.playDeathSoundExecuted = true;
+    }
+    // this.deathSound = null;
+
+    if (this.speedUpWorms.children.entries.length) {
+      Phaser.Actions.Call(
+        this.speedUpWorms.getChildren(),
+        function (worm) {
+          worm.body.setVelocity(0);
+        },
+        this
+      );
+    }
+    if (this.slowDownWorms.children.entries.length) {
+      Phaser.Actions.Call(
+        this.slowDownWorms.getChildren(),
+        function (worm) {
+          worm.body.setVelocity(0);
+        },
+        this
+      );
+    }
+    if (this.oilSplashes.children.entries.length) {
+      Phaser.Actions.Call(
+        this.oilSplashes.getChildren(),
+        function (oilSplash) {
+          oilSplash.body.setVelocity(0);
+        },
+        this
+      );
+    }
+
+    if (this.piranha.y > this.sys.canvas.height) {
+      this.setGameOptionsToDefault();
+      this.scene.start('BeginScene');
+    }
   }
 
   private resetObstacleVelocities() {
