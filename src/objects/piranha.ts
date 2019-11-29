@@ -54,15 +54,8 @@ export class Piranha extends Phaser.GameObjects.Sprite {
 
     // handle input
     if (this.jumpKey.isDown && !this.isFlapping) {
-      // flap
       this.isFlapping = true;
-      this.body.setVelocityY(-PiranhaConfig.velocity);
-      this.scene.tweens.add({
-        targets: this,
-        // props: { angle: -20 },
-        duration: 150,
-        ease: 'Power0'
-      });
+      this.jump();
     } else if (this.jumpKey.isUp && this.isFlapping) {
       this.isFlapping = false;
     }
@@ -71,5 +64,9 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     if (this.y + this.height > this.scene.sys.canvas.height + 80) {
       this.isDead = true;
     }
+  }
+
+  jump() {
+    this.body.setVelocityY(-PiranhaConfig.velocity);
   }
 }

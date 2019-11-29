@@ -75,7 +75,7 @@ export class StartScene extends Phaser.Scene {
     startBtn.setScale(0.5);
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
-      this.scene.start('GameScene');
+      this.scene.start('BeginScene');
     });
 
     const soundBtn = this.add.sprite(1300, 70, 'volumeOn');

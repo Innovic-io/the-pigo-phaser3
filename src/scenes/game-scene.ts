@@ -22,31 +22,12 @@ export class GameScene extends Phaser.Scene {
   private scoreText: Phaser.GameObjects.BitmapText;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
-  // private backgroundInitialSpeed = 4;
-  // private backgroundSpeedIncreaseBy = 3;
-  private obstacleVelocities;
-  // obstacleStartingVelocities = {
-  //     blueFish: 500,
-  //     yellowFish: 400,
-  //     dangerFish: 1000,
-  //     wood: 800,
-  //     worms: 240,
-  //     oilSplash: 240
-  // };
-  // gameObjectsTimers = {
-  //     blueFish: 1500,
-  //     yellowFish: 3500,
-  //     dangerFish: 10000,
-  //     wood: 4500,
-  //     worms: 10000,
-  //     oilSplash: 8000
-  // };
+   private  obstacleVelocities;
+
   gameTimeouts = [];
-  // private speedUpBy = 200;
+
   private isPlaying: boolean = false;
   private piranhaInMode = false;
-
-  // private rewardTime = 10000;
 
   constructor() {
     super({
@@ -103,6 +84,7 @@ export class GameScene extends Phaser.Scene {
       y: 200,
       key: 'piranha'
     });
+        this.piranha.jump();
 
     this.addNewBlueFish();
 
@@ -167,7 +149,7 @@ export class GameScene extends Phaser.Scene {
 
       if (this.piranha.y > this.sys.canvas.height) {
         this.setGameOptionsToDefault();
-        this.scene.restart();
+        this.scene.start('BeginScene');
       }
     }
   }
