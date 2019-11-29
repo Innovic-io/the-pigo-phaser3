@@ -7,7 +7,7 @@ import { WormSpeedUp } from '../objects/WormSpeedUp';
 import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
-import { GameConfigs } from '../assets/game-config';
+import { GameConfigs, TextConfig } from '../assets/game-config';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -154,7 +154,7 @@ export class GameScene extends Phaser.Scene {
     this.piranhaInMode = true;
     this.updateBackground('background-slow-down', false);
     this.updatePiranha('slow-down-piranha');
-    this.increaseObstaclesSpeeds(false);
+    this.decreaseObstaclesSpeeds(GameConfigs.slowDownBy);
     Phaser.Actions.Call(
       this.slowDownWorms.getChildren(),
       (worm) => worm.destroy(),
@@ -172,7 +172,7 @@ export class GameScene extends Phaser.Scene {
     this.piranhaInMode = true;
     this.updateBackground('background-speed-up', true);
     this.updatePiranha('speed-up-piranha');
-    this.increaseObstaclesSpeeds(true);
+    this.increaseObstaclesSpeeds(GameConfigs.speedUpBy);
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
       function (worm) {
@@ -190,21 +190,30 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
-  increaseObstaclesSpeeds(increase) {
-    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', increase);
-    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', increase);
-    this.changeSpeedOfObstacle(this.woods, 'wood', increase);
-    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', increase);
-    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', increase);
-    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', increase);
-    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', increase);
+  increaseObstaclesSpeeds(speedUpBy) {
+    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.woods, 'wood', speedUpBy);
+    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', speedUpBy);
+    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', speedUpBy);
+    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', speedUpBy);
+    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', speedUpBy);
+  }
+
+  decreaseObstaclesSpeeds(slowDownBy) {
+    this.changeSpeedOfObstacle(this.blueFishes, 'blueFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.yellowFishes, 'yellowFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.woods, 'wood', slowDownBy);
+    this.changeSpeedOfObstacle(this.oilSplashes, 'oilSplash', slowDownBy);
+    this.changeSpeedOfObstacle(this.dangerFishes, 'dangerFish', slowDownBy);
+    this.changeSpeedOfObstacle(this.speedUpWorms, 'worms', slowDownBy);
+    this.changeSpeedOfObstacle(this.slowDownWorms, 'worms', slowDownBy);
   }
 
   updateBackground(backgroundKey, speedUp) {
     this.background.setTexture(backgroundKey);
     speedUp ? this.backgroundMovementSpeed += GameConfigs.backgroundSpeedIncreaseBy
-      : this.backgroundMovementSpeed -= GameConfigs.backgroundSpeedIncreaseBy;
-    console.log(this.backgroundMovementSpeed);
+      : this.backgroundMovementSpeed -= GameConfigs.backgroundSpeedDecreaseBy;
   }
 
   updatePiranha(piranha) {
@@ -389,10 +398,8 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  changeSpeedOfObstacle(listOfObstacles, obstacle, increase) {
-    const speedUpVelocity = increase ?
-      this.obstacleVelocities[obstacle] + GameConfigs.speedUpBy
-      : this.obstacleVelocities[obstacle] - GameConfigs.speedUpBy;
+  changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
+    const speedUpVelocity = this.obstacleVelocities[obstacle] + increaseBy;
     listOfObstacles.children.entries.forEach(obstacle => {
       obstacle.body.setVelocity(-speedUpVelocity, 0);
     });
@@ -476,19 +483,15 @@ export class GameScene extends Phaser.Scene {
   addBonusText() {
     this.bonusPointsText = this.add
       .text(
-        this.piranha.x+5,
-        this.piranha.y-5,
+        this.piranha.x+10,
+        this.piranha.y-10,
         '+10',
-        {
-          fontSize: 40,
-          fontFamily: 'Brush Script MT',
-          color: '#000'
-        }
+        TextConfig.bonus10PtsStyle
       )
       .setDepth(2);
     this.gameTimeouts.push(setTimeout(() => {
       this.bonusPointsText.destroy();
-    },500)
+    },GameConfigs.bonus10PtsDuration)
     )
   }
 
@@ -515,6 +518,15 @@ export class GameScene extends Phaser.Scene {
         this.slowDownWorms.getChildren(),
         function (worm) {
           worm.body.setVelocity(0);
+        },
+        this
+      );
+    }
+    if (this.oilSplashes.children.entries.length) {
+      Phaser.Actions.Call(
+        this.oilSplashes.getChildren(),
+        function (oilSplash) {
+          oilSplash.body.setVelocity(0);
         },
         this
       );
