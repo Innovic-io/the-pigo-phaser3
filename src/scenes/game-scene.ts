@@ -8,6 +8,7 @@ import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
 import { GameConfigs, TextConfig } from '../assets/game-config';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -63,7 +64,7 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.background = this.add
-      .tileSprite(0, 0, 1390, 1600, 'background')
+      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
@@ -231,22 +232,22 @@ export class GameScene extends Phaser.Scene {
 
   addNewBlueFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addBlueFish(1400, i * 48);
+    this.addBlueFish(SCREEN_WIDTH, i * 48);
   }
 
   addNewDangerFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addDangerFish(1400, i * 48);
+    this.addDangerFish(SCREEN_WIDTH, i * 48);
   }
 
   addNewYellowFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addYellowFish(1400, i * 48);
+    this.addYellowFish(SCREEN_WIDTH, i * 48);
   }
 
   addNewOilSplash(): void {
     let i = this.getRandomInt(2, 7);
-    this.addOilSplash(1400, i * 48);
+    this.addOilSplash(SCREEN_WIDTH, i * 48);
   }
 
   addBlueFish(x: number, y: number): void {
@@ -360,7 +361,7 @@ export class GameScene extends Phaser.Scene {
     this.woods.add(
       new Wood({
           scene: this,
-          x: 1400,
+          x: SCREEN_WIDTH,
           y: 38,
           key: 'wood'
         },

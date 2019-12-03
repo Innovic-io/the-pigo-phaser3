@@ -1,3 +1,5 @@
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
+
 export class BeginScene extends Phaser.Scene {
     piranha;
     piranhaChangeImage = true;
@@ -19,7 +21,7 @@ export class BeginScene extends Phaser.Scene {
 
     create(): void {
         this.background = this.add
-            .tileSprite(0, 0, 1390, 1600, "background")
+            .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, "background")
             .setOrigin(0, 0);
 
         const startGameLogo = this.add.sprite(700, 230, 'startGame');

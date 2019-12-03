@@ -1,3 +1,10 @@
+import {
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  START_BTN_POSITION,
+  START_LOGO_POSITION
+} from '../services/scaling.service';
+
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
 
@@ -58,17 +65,17 @@ export class StartScene extends Phaser.Scene {
 
   create(): void {
     this.background = this.add
-      .tileSprite(0, 0, 1390, 1600, 'background')
+      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
 
-    const startBtn = this.add.sprite(700, 380, 'startBtn');
+    const startBtn = this.add.sprite(START_BTN_POSITION.x, START_BTN_POSITION.y, 'startBtn');
     startBtn.setScale(0.5);
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
       this.scene.start('BeginScene');
     });
 
-    const soundBtn = this.add.sprite(1300, 70, 'volumeOn');
+    const soundBtn = this.add.sprite(SCREEN_WIDTH - 100,70, 'volumeOn');
     soundBtn.setInteractive();
     soundBtn.on('pointerdown', () => {
       if (this.sound.mute) {
@@ -81,7 +88,7 @@ export class StartScene extends Phaser.Scene {
       soundBtn.setTexture('volumeOff');
     });
 
-    const logo = this.add.sprite(700, 170, 'pigoLogo');
+    const logo = this.add.sprite(START_LOGO_POSITION.x, START_LOGO_POSITION.y, 'pigoLogo');
     logo.setScale(0.9);
 
   }
