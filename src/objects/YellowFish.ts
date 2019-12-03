@@ -1,9 +1,11 @@
+import { SCALE } from "../services/scaling.service";
+
 export class YellowFish extends Phaser.GameObjects.Image {
   constructor(params, velocity) {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // image
-    this.setScale(1);
+    this.setScale(SCALE);
     this.setOrigin(0, 0);
 
     // physics

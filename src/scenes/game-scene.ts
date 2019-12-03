@@ -8,7 +8,7 @@ import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
 import { GameConfigs, TextConfig } from '../assets/game-config';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
+import { GAME_HEIGHT_BLOCK, SCALE, SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -80,6 +80,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(2);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
+
     this.dangerFishes = this.add.group({ classType: BlueFish });
     this.speedUpWorms = this.add.group({ classType: WormSpeedUp });
     this.slowDownWorms = this.add.group({ classType: WormSlowDown });
@@ -94,6 +95,7 @@ export class GameScene extends Phaser.Scene {
       key: 'piranha'
     });
     this.piranha.jump();
+    this.piranha.setScale(SCALE);
 
     this.addNewBlueFish();
 
@@ -232,22 +234,22 @@ export class GameScene extends Phaser.Scene {
 
   addNewBlueFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addBlueFish(SCREEN_WIDTH, i * 48);
+    this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewDangerFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addDangerFish(SCREEN_WIDTH, i * 48);
+    this.addDangerFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewYellowFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addYellowFish(SCREEN_WIDTH, i * 48);
+    this.addYellowFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewOilSplash(): void {
     let i = this.getRandomInt(2, 7);
-    this.addOilSplash(SCREEN_WIDTH, i * 48);
+    this.addOilSplash(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addBlueFish(x: number, y: number): void {
@@ -421,7 +423,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.overlap(
       this.piranha,
       this.woods,
-      function () {
+      () => {
         this.piranha.setDead(true);
       },
       null,

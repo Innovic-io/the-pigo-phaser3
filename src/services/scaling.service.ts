@@ -31,3 +31,5 @@ export const START_BTN_POSITION = {
   x: CENTER_POINT.x,
   y: CENTER_POINT.y + 150
 };
+
+export const GAME_HEIGHT_BLOCK = SCREEN_HEIGHT / 10;

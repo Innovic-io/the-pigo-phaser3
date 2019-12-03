@@ -1,4 +1,4 @@
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
+import { SCREEN_HEIGHT, SCREEN_WIDTH, SCALE} from '../services/scaling.service';
 
 export class BeginScene extends Phaser.Scene {
     piranha;
@@ -28,7 +28,7 @@ export class BeginScene extends Phaser.Scene {
         startGameLogo.setScale(0.7);
 
         this.piranha = this.add.sprite(90, 230, 'piranha');
-        this.piranha.setScale(1);
+        this.piranha.setScale(SCALE);
         this.changePiranhaImage();
 
         this.input.keyboard.on('keydown', event => {

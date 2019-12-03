@@ -2,7 +2,8 @@ import {
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
   START_BTN_POSITION,
-  START_LOGO_POSITION
+  START_LOGO_POSITION,
+  SCALE
 } from '../services/scaling.service';
 
 export class StartScene extends Phaser.Scene {
@@ -66,6 +67,7 @@ export class StartScene extends Phaser.Scene {
   create(): void {
     this.background = this.add
       .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
+      .setDisplaySize(SCREEN_WIDTH, SCREEN_HEIGHT)
       .setOrigin(0, 0);
 
     const startBtn = this.add.sprite(START_BTN_POSITION.x, START_BTN_POSITION.y, 'startBtn');
