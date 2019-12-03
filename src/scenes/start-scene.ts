@@ -9,7 +9,7 @@ import {
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
 
-  constructor(private background: Phaser.GameObjects.TileSprite) {
+  constructor(private background: Phaser.GameObjects.Sprite) {
     super({
       key: 'StartScene'
     });
@@ -66,12 +66,12 @@ export class StartScene extends Phaser.Scene {
 
   create(): void {
     this.background = this.add
-      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
+      .sprite(0, 0, 'background')
       .setDisplaySize(SCREEN_WIDTH, SCREEN_HEIGHT)
       .setOrigin(0, 0);
 
     const startBtn = this.add.sprite(START_BTN_POSITION.x, START_BTN_POSITION.y, 'startBtn');
-    startBtn.setScale(0.5);
+    startBtn.setScale(SCALE - (SCALE * .4));
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
       this.scene.start('BeginScene');
@@ -91,7 +91,7 @@ export class StartScene extends Phaser.Scene {
     });
 
     const logo = this.add.sprite(START_LOGO_POSITION.x, START_LOGO_POSITION.y, 'pigoLogo');
-    logo.setScale(0.9);
+    logo.setScale(SCALE);
 
   }
 

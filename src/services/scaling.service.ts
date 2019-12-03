@@ -1,7 +1,7 @@
 export const SCREEN_WIDTH = window.innerWidth;
 export const SCREEN_HEIGHT = window.innerHeight;
 
-export const GAME_MIN_WIDTH = 800;
+export const GAME_MIN_WIDTH = 1067;
 export const GAME_MIN_HEIGHT = 600;
 
 export const SCALE_WIDTH = SCREEN_WIDTH / GAME_MIN_WIDTH;
@@ -29,7 +29,7 @@ export const START_LOGO_POSITION = {
 
 export const START_BTN_POSITION = {
   x: CENTER_POINT.x,
-  y: CENTER_POINT.y + 150
+  y: START_LOGO_POSITION.y * 2
 };
 
 export const GAME_HEIGHT_BLOCK = SCREEN_HEIGHT / 10;

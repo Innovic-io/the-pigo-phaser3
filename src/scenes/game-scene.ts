@@ -8,7 +8,13 @@ import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
 import { GameConfigs, TextConfig } from '../assets/game-config';
-import { GAME_HEIGHT_BLOCK, SCALE, SCREEN_HEIGHT, SCREEN_WIDTH } from '../services/scaling.service';
+import {
+  CENTER_POINT,
+  GAME_HEIGHT_BLOCK,
+  SCALE,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH
+} from '../services/scaling.service';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -66,14 +72,15 @@ export class GameScene extends Phaser.Scene {
     this.background = this.add
       .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
+
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
     this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
       .bitmapText(
-        this.sys.canvas.width / 2 - 14,
-        30,
+        CENTER_POINT.x,
+        SCREEN_HEIGHT * .06,
         'font',
         this.registry.values.score
       )
@@ -90,8 +97,8 @@ export class GameScene extends Phaser.Scene {
 
     this.piranha = new Piranha({
       scene: this,
-      x: 50,
-      y: 200,
+      x: CENTER_POINT.x * .05,
+      y: CENTER_POINT.y,
       key: 'piranha'
     });
     this.piranha.jump();
@@ -281,8 +288,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     const position = {
-      x: this.getRandomInt(1400, 1800),
-      y: this.getRandomInt(50, 320),
+      x: this.getRandomInt(SCREEN_WIDTH, SCREEN_WIDTH * 1.2),
+      y: this.getRandomInt(SCREEN_HEIGHT * .1, SCREEN_HEIGHT * .66),
     };
     this.getRandomInt(0, 2) ? this.addSpeedUpWorm(position) : this.addSlowDownWorm(position);
   }
@@ -364,7 +371,7 @@ export class GameScene extends Phaser.Scene {
       new Wood({
           scene: this,
           x: SCREEN_WIDTH,
-          y: 38,
+          y: 38, // @TODO: replace for dyn value
           key: 'wood'
         },
         this.obstacleVelocities.wood)

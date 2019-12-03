@@ -12,7 +12,7 @@ export class YellowFish extends Phaser.GameObjects.Image {
     this.scene.physics.world.enable(this);
     this.body.allowGravity = false;
     this.body.setVelocityX(-velocity);
-    this.body.setSize(121, 95);
+    this.body.setSize(this.body.width, this.body.height*1.2);
 
     this.scene.add.existing(this);
   }
