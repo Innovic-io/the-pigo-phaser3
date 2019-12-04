@@ -33,6 +33,9 @@ export class BeginScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
+      this.input.on('pointerdown', event => {
+        this.scene.start('GameScene', {piranhaStates: this.piranhaImagesStates});
+      });
     }
 
     changePiranhaImage() {
