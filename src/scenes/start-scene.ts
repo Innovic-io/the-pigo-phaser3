@@ -1,5 +1,8 @@
+import { PiranhaStates } from "../assets/piranha-images";
+
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
+  piranhaStates = PiranhaStates;
 
   constructor(private background: Phaser.GameObjects.TileSprite) {
     super({
@@ -50,10 +53,12 @@ export class StartScene extends Phaser.Scene {
     });
 
     this.load.pack(
-      'flappyBirdPack',
+      'pargoPack',
       './src/assets/pack.json',
-      'flappyBirdPack'
+      'pargoPack'
     );
+
+    this.loadExistingPiranhaImageStates();
   }
 
   create(): void {
@@ -65,7 +70,7 @@ export class StartScene extends Phaser.Scene {
     startBtn.setScale(0.5);
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
-      this.scene.start('BeginScene');
+      this.scene.start('BeginScene', {piranha: this.getPiranhaState()});
     });
 
     const soundBtn = this.add.sprite(1300, 70, 'volumeOn');
@@ -84,6 +89,32 @@ export class StartScene extends Phaser.Scene {
     const logo = this.add.sprite(700, 170, 'pigoLogo');
     logo.setScale(0.9);
 
+  }
+
+  getPiranhaState() {
+    const piranhaStates = {};
+    Object.keys(PiranhaStates).forEach(state=> {
+      piranhaStates[state] = PiranhaStates[state]['stateKey']
+    });
+    return piranhaStates;
+  }
+
+  loadExistingPiranhaImageStates() {
+    Object.keys(PiranhaStates).forEach(state=> {
+      this.verifyImageURL(PiranhaStates[state], state);
+    });
+  }
+
+  verifyImageURL(state, stateName) {
+    const img = new Image();
+    img.src = state.url;
+    img.onload = () => {
+      const image = this.load.image(state.stateKey, state.url);
+    };
+    img.onerror = () => {
+      this.piranhaStates[stateName]['stateKey'] = this.piranhaStates[stateName]['defaultKey'];
+      // callBack(false);
+    };
   }
 
 }
