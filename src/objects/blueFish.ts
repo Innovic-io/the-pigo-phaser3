@@ -13,7 +13,7 @@ export class BlueFish extends Phaser.GameObjects.Image {
     this.body.allowGravity = false;
     this.body.setVelocityX(-velocity);
 
-    this.body.setSize(this.body.width, this.body.height - (this.body.height * .05));
+    this.body.setSize(this.body.width, this.body.height - (this.body.height * .1));
 
     this.scene.add.existing(this);
   }

@@ -371,7 +371,7 @@ export class GameScene extends Phaser.Scene {
       new Wood({
           scene: this,
           x: SCREEN_WIDTH,
-          y: 38, // @TODO: replace for dyn value
+          y: SCREEN_HEIGHT * .08,
           key: 'wood'
         },
         this.obstacleVelocities.wood)

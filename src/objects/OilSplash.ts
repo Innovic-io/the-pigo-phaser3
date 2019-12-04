@@ -11,7 +11,7 @@ export class OilSplash extends Phaser.GameObjects.Image {
     this.scene.physics.world.enable(this);
     this.body.allowGravity = false;
     this.body.setVelocityX(-velocity);
-    this.body.setSize(this.body.width - ( SCALE * .4 ), 87);
+    this.body.setSize(this.body.width - ( SCALE * .4 ), this.body.height/2);
 
     this.scene.add.existing(this);
 
