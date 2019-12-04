@@ -33,3 +33,17 @@ export const START_BTN_POSITION = {
 };
 
 export const GAME_HEIGHT_BLOCK = SCREEN_HEIGHT / 10;
+
+export const PROGRESS_BAR = {
+  x: CENTER_POINT.x - (CENTER_POINT.x * .3),
+  y: CENTER_POINT.y,
+  width: SCREEN_WIDTH / 3.5,
+  height: SCREEN_HEIGHT / 12
+};
+export const PROGRESS_BAR_INNER = { x: PROGRESS_BAR.x + 10, y: PROGRESS_BAR.y + 10 };
+export const LOADING_TXT = { x: CENTER_POINT.x, y: CENTER_POINT.y - (CENTER_POINT.y * .2), size: 20 * SCALE };
+export const PERCENT_TXT = {
+  x: CENTER_POINT.x - (CENTER_POINT.x * .01),
+  y: CENTER_POINT.y + (CENTER_POINT.y * .09),
+  size: 16 * SCALE
+};
