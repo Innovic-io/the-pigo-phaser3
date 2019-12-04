@@ -53,9 +53,9 @@ export class StartScene extends Phaser.Scene {
     });
 
     this.load.pack(
-      'pargoPack',
+      'pigoPack',
       './src/assets/pack.json',
-      'pargoPack'
+      'pigoPack'
     );
 
     this.loadExistingPiranhaImageStates();

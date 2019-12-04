@@ -47,9 +47,9 @@ export class GameScene extends Phaser.Scene {
 
   preload(): void {
       this.load.pack(
-        'pargoPack',
+        'pigoPack',
         './src/assets/pack.json',
-        'pargoPack'
+        'pigoPack'
       );
 
     // @TODO this should go into separate function
