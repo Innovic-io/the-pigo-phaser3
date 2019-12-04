@@ -89,6 +89,7 @@ export class StartScene extends Phaser.Scene {
       this.sound.mute = true;
       soundBtn.setTexture('volumeOff');
     });
+    soundBtn.setScale(SCALE);
 
     const logo = this.add.sprite(START_LOGO_POSITION.x, START_LOGO_POSITION.y, 'pigoLogo');
     logo.setScale(SCALE);
