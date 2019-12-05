@@ -1,8 +1,6 @@
-import { PiranhaStates } from "../assets/piranha-images";
-
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
-  piranhaStates = PiranhaStates;
+  piranhaStates = JSON.parse(this.readJSON('./src/assets/piranha-pack.json'));
 
   constructor(private background: Phaser.GameObjects.TileSprite) {
     super({
@@ -93,28 +91,33 @@ export class StartScene extends Phaser.Scene {
 
   getPiranhaState() {
     const piranhaStates = {};
-    Object.keys(PiranhaStates).forEach(state=> {
-      piranhaStates[state] = PiranhaStates[state]['stateKey']
+    Object.keys(this.piranhaStates).forEach(state=> {
+      piranhaStates[state] = this.piranhaStates[state]['stateKey']
     });
     return piranhaStates;
   }
 
   loadExistingPiranhaImageStates() {
+    const PiranhaStates = JSON.parse(this.readJSON('./src/assets/piranha-pack.json'));
     Object.keys(PiranhaStates).forEach(state=> {
       this.verifyImageURL(PiranhaStates[state], state);
     });
   }
 
   verifyImageURL(state, stateName) {
-    const img = new Image();
-    img.src = state.url;
-    img.onload = () => {
-      const image = this.load.image(state.stateKey, state.url);
-    };
-    img.onerror = () => {
+    if (state.url.length) {
+      this.load.image(state.stateKey, state.url);
+    } else {
       this.piranhaStates[stateName]['stateKey'] = this.piranhaStates[stateName]['defaultKey'];
-      // callBack(false);
-    };
+    }
   }
+
+  readJSON(file) {
+    const request = new XMLHttpRequest();
+    request.open('GET', file, false);
+    request.send(null);
+    if (request.status == 200)
+      return request.responseText;
+  };
 
 }
