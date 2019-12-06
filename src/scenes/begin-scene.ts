@@ -1,20 +1,19 @@
 export class BeginScene extends Phaser.Scene {
-    piranha;
-    piranhaChangeImage = true;
+  piranha;
+  piranhaImagesStates;
+  piranhaChangeImage = true;
 
+  constructor(private background: Phaser.GameObjects.TileSprite) {
+    super({
+      key: "BeginScene"
+    });
+  }
 
-    constructor(private background: Phaser.GameObjects.TileSprite) {
-        super({
-            key: "BeginScene"
-        });
-    }
+  init(data) {
+    this.piranhaImagesStates = data;
+  }
 
     preload(): void {
-        this.load.pack(
-            "flappyBirdPack",
-            "./src/assets/pack.json",
-            "flappyBirdPack"
-        );
     }
 
     create(): void {
@@ -30,9 +29,12 @@ export class BeginScene extends Phaser.Scene {
         this.changePiranhaImage();
 
         this.input.keyboard.on('keydown', event => {
-            this.scene.start('GameScene');
+            this.scene.start('GameScene', { piranhaStates: this.piranhaImagesStates });
         });
 
+      this.input.on('pointerdown', event => {
+        this.scene.start('GameScene', {piranhaStates: this.piranhaImagesStates});
+      });
     }
 
     changePiranhaImage() {
@@ -46,7 +48,7 @@ export class BeginScene extends Phaser.Scene {
 
     togglePiranhaImage() {
         this.piranhaChangeImage ?
-            this.piranha.setTexture('closed-eyes-piranha') : this.piranha.setTexture('piranha');
+            this.piranha.setTexture(this.piranhaImagesStates.piranha.blinkingPiranha) : this.piranha.setTexture(this.piranhaImagesStates.piranha.piranha);
         this.piranhaChangeImage = !this.piranhaChangeImage;
     }
 

@@ -1,5 +1,8 @@
+import { FilePaths } from "../assets/game-config";
+
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
+  piranhaStates = {};
 
   constructor(private background: Phaser.GameObjects.TileSprite) {
     super({
@@ -7,7 +10,7 @@ export class StartScene extends Phaser.Scene {
     });
   }
 
-  preload(): void {
+  async preload() {
     const progressBar = this.add.graphics();
     const progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -50,10 +53,12 @@ export class StartScene extends Phaser.Scene {
     });
 
     this.load.pack(
-      'flappyBirdPack',
+      'pigoPack',
       './src/assets/pack.json',
-      'flappyBirdPack'
+      'pigoPack'
     );
+    this.piranhaStates = await this.readJSON(FilePaths.piranhaPack);
+    this.loadExistingPiranhaImageStates();
   }
 
   create(): void {
@@ -65,7 +70,7 @@ export class StartScene extends Phaser.Scene {
     startBtn.setScale(0.5);
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
-      this.scene.start('BeginScene');
+      this.scene.start('BeginScene', {piranha: this.getPiranhaState()});
     });
 
     const soundBtn = this.add.sprite(1300, 70, 'volumeOn');
@@ -84,6 +89,34 @@ export class StartScene extends Phaser.Scene {
     const logo = this.add.sprite(700, 170, 'pigoLogo');
     logo.setScale(0.9);
 
+  }
+
+  getPiranhaState() {
+    const piranhaStates = {};
+    Object.keys(this.piranhaStates).forEach(state=> {
+      piranhaStates[state] = this.piranhaStates[state]['stateKey']
+    });
+    return piranhaStates;
+  }
+
+  async loadExistingPiranhaImageStates() {
+    const PiranhaStates = await this.readJSON(FilePaths.piranhaPack);
+    Object.keys(PiranhaStates).forEach(state => {
+      this.verifyImageURL(PiranhaStates[state], state);
+    });
+  }
+
+  verifyImageURL(state, stateName) {
+    if (state.url.length) {
+      this.load.image(state.stateKey, state.url);
+    } else {
+      this.piranhaStates[stateName]['stateKey'] = this.piranhaStates[stateName]['defaultKey'];
+    }
+  }
+
+  async readJSON(file) {
+    const response = await fetch(file);
+    return await response.json();
   }
 
 }
