@@ -46,12 +46,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-      this.load.pack(
-        'pigoPack',
-        './src/assets/pack.json',
-        'pigoPack'
-      );
-
     // @TODO this should go into separate function
     if (!this.isPlaying) {
       this.isPlaying = true;
@@ -109,6 +103,8 @@ export class GameScene extends Phaser.Scene {
     this.setTimerForOilSplashes();
 
     this.changePiranhaImage();
+
+    this.setTimerForRemovingUnusedObjects();
 
   }
 
@@ -563,6 +559,34 @@ export class GameScene extends Phaser.Scene {
     });
     this.speedUpWorms.children.entries.forEach(worm => {
       worm.body.setVelocity(-GameConfigs.obstacleStartingVelocities.worms, 0);
+    });
+  }
+
+  setTimerForRemovingUnusedObjects() {
+    this.time.addEvent({
+      delay: 10000,
+      callback: this.removeUnusedObjects,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  removeUnusedObjects() {
+    this.remove(this.blueFishes);
+    this.remove(this.yellowFishes);
+    this.remove(this.dangerFishes);
+    this.remove(this.woods);
+    this.remove(this.speedUpWorms);
+    this.remove(this.slowDownWorms);
+    this.remove(this.oilSplashes);
+  }
+
+  remove(objects) {
+    objects.children.iterate((object) => {
+        if(object && object.x < -10) {
+          objects.children.delete(object);
+          object.destroy();
+        }
     });
   }
 

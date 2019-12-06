@@ -14,11 +14,6 @@ export class BeginScene extends Phaser.Scene {
   }
 
     preload(): void {
-        this.load.pack(
-            "pigoPack",
-            "./src/assets/pack.json",
-            "pigoPack"
-        );
     }
 
     create(): void {
