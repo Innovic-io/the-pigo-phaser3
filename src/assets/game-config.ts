@@ -39,3 +39,7 @@ export const TextConfig = {
     fontFamily: 'Comic Sans MS',
     color: '#000'  }
 };
+
+export const FilePaths = {
+  piranhaPack: './src/assets/piranha-pack.json'
+};

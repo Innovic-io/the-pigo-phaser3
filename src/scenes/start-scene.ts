@@ -1,6 +1,8 @@
+import { FilePaths } from "../assets/game-config";
+
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
-  piranhaStates = JSON.parse(this.readJSON('./src/assets/piranha-pack.json'));
+  piranhaStates = {};
 
   constructor(private background: Phaser.GameObjects.TileSprite) {
     super({
@@ -8,7 +10,7 @@ export class StartScene extends Phaser.Scene {
     });
   }
 
-  preload(): void {
+  async preload() {
     const progressBar = this.add.graphics();
     const progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -55,7 +57,7 @@ export class StartScene extends Phaser.Scene {
       './src/assets/pack.json',
       'pigoPack'
     );
-
+    this.piranhaStates = await this.readJSON(FilePaths.piranhaPack);
     this.loadExistingPiranhaImageStates();
   }
 
@@ -97,9 +99,9 @@ export class StartScene extends Phaser.Scene {
     return piranhaStates;
   }
 
-  loadExistingPiranhaImageStates() {
-    const PiranhaStates = JSON.parse(this.readJSON('./src/assets/piranha-pack.json'));
-    Object.keys(PiranhaStates).forEach(state=> {
+  async loadExistingPiranhaImageStates() {
+    const PiranhaStates = await this.readJSON(FilePaths.piranhaPack);
+    Object.keys(PiranhaStates).forEach(state => {
       this.verifyImageURL(PiranhaStates[state], state);
     });
   }
@@ -112,12 +114,9 @@ export class StartScene extends Phaser.Scene {
     }
   }
 
-  readJSON(file) {
-    const request = new XMLHttpRequest();
-    request.open('GET', file, false);
-    request.send(null);
-    if (request.status == 200)
-      return request.responseText;
-  };
+  async readJSON(file) {
+    const response = await fetch(file);
+    return await response.json();
+  }
 
 }
