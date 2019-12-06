@@ -3,6 +3,7 @@ import { SCALE } from '../services/scaling.service';
 
 export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
+  private tapJumpKey = this.scene.input.activePointer;
   private isDead: boolean;
   private isFlapping: boolean;
   inSpeed = false;
@@ -49,10 +50,10 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    if (this.jumpKey.isDown && !this.isFlapping) {
+    if ((this.jumpKey.isDown || this.tapJumpKey.isDown) && !this.isFlapping) {
       this.isFlapping = true;
       this.jump();
-    } else if (this.jumpKey.isUp && this.isFlapping) {
+    } else if ((this.jumpKey.isUp && !this.tapJumpKey.isDown) && this.isFlapping) {
       this.isFlapping = false;
     }
 

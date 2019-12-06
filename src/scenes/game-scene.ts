@@ -31,6 +31,7 @@ export class GameScene extends Phaser.Scene {
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
   private  obstacleVelocities;
+  piranhaStates;
 
   gameTimeouts = [];
   eatFishSound;
@@ -46,17 +47,12 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  init(): void {
+  init(data) {
+    this.piranhaStates = data.piranhaStates.piranha;
     this.registry.set('score', 0);
   }
 
   preload(): void {
-    this.load.pack(
-      'flappyBirdPack',
-      './src/assets/pack.json',
-      'flappyBirdPack'
-    );
-
     // @TODO this should go into separate function
     if (!this.isPlaying) {
       this.isPlaying = true;
@@ -118,6 +114,8 @@ export class GameScene extends Phaser.Scene {
 
     this.changePiranhaImage();
 
+    this.setTimerForRemovingUnusedObjects();
+
   }
 
   update(): void {
@@ -145,25 +143,25 @@ export class GameScene extends Phaser.Scene {
     if (this.piranhaInMode) {
       return;
     }
-    this.piranhaChangeImage ?
-      this.piranha.setTexture('closed-eyes-piranha') : this.piranha.setTexture('piranha');
-    this.piranhaChangeImage = !this.piranhaChangeImage;
+      this.piranhaChangeImage ?
+        this.piranha.setTexture(this.piranhaStates.blinkingPiranha) : this.piranha.setTexture(this.piranhaStates.piranha);
+      this.piranhaChangeImage = !this.piranhaChangeImage;
   }
 
   moveMouths() {
     if (this.piranhaInMode) {
       return;
     }
-    this.piranha.setTexture('open-mouths-piranha');
+    this.piranha.setTexture(this.piranhaStates.eatingPiranha);
     setTimeout(() => {
-      this.piranha.setTexture('piranha');
+      this.piranha.setTexture(this.piranhaStates.piranha);
     }, 100);
   }
 
   slowDown() {
     this.piranhaInMode = true;
     this.updateBackground('background-slow-down', false);
-    this.updatePiranha('slow-down-piranha');
+    this.updatePiranha(this.piranhaStates.slowedPiranha);
     this.decreaseObstaclesSpeeds(GameConfigs.slowDownBy);
     Phaser.Actions.Call(
       this.slowDownWorms.getChildren(),
@@ -181,7 +179,7 @@ export class GameScene extends Phaser.Scene {
     this.piranha.setInSpeed(true);
     this.piranhaInMode = true;
     this.updateBackground('background-speed-up', true);
-    this.updatePiranha('speed-up-piranha');
+    this.updatePiranha(this.piranhaStates.speedUpPiranha);
     this.increaseObstaclesSpeeds(GameConfigs.speedUpBy);
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
@@ -236,7 +234,7 @@ export class GameScene extends Phaser.Scene {
     this.piranhaInMode = false;
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.background.setTexture('background');
-    this.updatePiranha('piranha');
+    this.updatePiranha(this.piranhaStates.piranha);
   }
 
   addNewBlueFish(): void {
@@ -506,7 +504,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   endGame() {
-    this.piranha.setTexture('dead-piranha');
+    this.piranha.setTexture(this.piranhaStates.deadPiranha);
     this.clearTimeoutsValues();
     if (!this.playDeathSoundExecuted) {
       this.deathSound.play();
@@ -571,6 +569,34 @@ export class GameScene extends Phaser.Scene {
     });
     this.speedUpWorms.children.entries.forEach(worm => {
       worm.body.setVelocity(-GameConfigs.obstacleStartingVelocities.worms, 0);
+    });
+  }
+
+  setTimerForRemovingUnusedObjects() {
+    this.time.addEvent({
+      delay: 10000,
+      callback: this.removeUnusedObjects,
+      callbackScope: this,
+      loop: true
+    });
+  }
+
+  removeUnusedObjects() {
+    this.remove(this.blueFishes);
+    this.remove(this.yellowFishes);
+    this.remove(this.dangerFishes);
+    this.remove(this.woods);
+    this.remove(this.speedUpWorms);
+    this.remove(this.slowDownWorms);
+    this.remove(this.oilSplashes);
+  }
+
+  remove(objects) {
+    objects.children.iterate((object) => {
+        if(object && object.x < -10) {
+          objects.children.delete(object);
+          object.destroy();
+        }
     });
   }
 

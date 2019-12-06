@@ -1,5 +1,5 @@
 {
-  "flappyBirdPack": {
+  "pigoPack": {
     "files": [
       {
         "type": "bitmapFont",
@@ -26,31 +26,6 @@
         "type": "image",
         "key": "piranha",
         "url": "./src/assets/images/piranha.png"
-      },
-      {
-        "type": "image",
-        "key": "closed-eyes-piranha",
-        "url": "./src/assets/images/closed-eyes-piranha.png"
-      },
-      {
-        "type": "image",
-        "key": "open-mouths-piranha",
-        "url": "./src/assets/images/open-mouths-piranha.png"
-      },
-      {
-        "type": "image",
-        "key": "speed-up-piranha",
-        "url": "./src/assets/images/speed-up-piranha.png"
-      },
-      {
-        "type": "image",
-        "key": "slow-down-piranha",
-        "url": "./src/assets/images/slow-down-piranha.png"
-      },
-      {
-        "type": "image",
-        "key": "dead-piranha",
-        "url": "./src/assets/images/dead-piranha.png"
       },
       {
         "type": "image",
