@@ -1,4 +1,5 @@
 import { GameConfigs, PiranhaConfig } from '../assets/game-config';
+import { SCALE } from '../services/scaling.service';
 
 export class Piranha extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
@@ -27,7 +28,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // sprite
-    this.setScale(1);
+    this.setScale(SCALE);
     this.setOrigin(0, 0);
 
     // variables
@@ -37,7 +38,8 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     // physics
     this.scene.physics.world.enable(this);
     this.body.setGravityY(1000);
-    this.body.setSize(46, 36);
+    this.body.setSize(this.body.width/3, this.body.height/3);
+
 
     // input
     this.jumpKey = this.scene.input.keyboard.addKey(

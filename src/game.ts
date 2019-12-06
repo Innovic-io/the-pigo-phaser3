@@ -3,10 +3,20 @@ import { GameScene } from './scenes/game-scene';
 import { StartScene } from './scenes/start-scene';
 import { BeginScene } from './scenes/begin-scene'
 
-const config: GameConfig = {
-  width: 1390,
-  height: 480,
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from './services/scaling.service';
+
+const config = {
+  type: Phaser.AUTO,
+  dom: {
+    createContainer: true
+  },
   parent: 'game',
+  scale: {
+    mode: 'EXACT_FIT',
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    zoom: 1/window.devicePixelRatio,
+  },
   scene: [StartScene, GameScene, BeginScene],
   input: {
     keyboard: true
@@ -21,7 +31,7 @@ const config: GameConfig = {
 };
 
 export class Game extends Phaser.Game {
-  constructor(config: GameConfig) {
+  constructor(config) {
     super(config);
   }
 }

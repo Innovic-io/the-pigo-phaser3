@@ -8,6 +8,13 @@ import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
 import { GameConfigs, TextConfig } from '../assets/game-config';
+import {
+  CENTER_POINT,
+  GAME_HEIGHT_BLOCK,
+  SCALE,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH
+} from '../services/scaling.service';
 
 export class GameScene extends Phaser.Scene {
   private piranha: Piranha;
@@ -59,22 +66,24 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.background = this.add
-      .tileSprite(0, 0, 1390, 1600, 'background')
+      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
+
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
     this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
       .bitmapText(
-        this.sys.canvas.width / 2 - 14,
-        30,
+        CENTER_POINT.x,
+        SCREEN_HEIGHT * .06,
         'font',
         this.registry.values.score
       )
       .setDepth(2);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
+
     this.dangerFishes = this.add.group({ classType: BlueFish });
     this.speedUpWorms = this.add.group({ classType: WormSpeedUp });
     this.slowDownWorms = this.add.group({ classType: WormSlowDown });
@@ -84,11 +93,12 @@ export class GameScene extends Phaser.Scene {
 
     this.piranha = new Piranha({
       scene: this,
-      x: 50,
-      y: 200,
+      x: CENTER_POINT.x * .05,
+      y: CENTER_POINT.y,
       key: 'piranha'
     });
     this.piranha.jump();
+    this.piranha.setScale(SCALE);
 
     this.addNewBlueFish();
 
@@ -229,22 +239,22 @@ export class GameScene extends Phaser.Scene {
 
   addNewBlueFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addBlueFish(1400, i * 48);
+    this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewDangerFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addDangerFish(1400, i * 48);
+    this.addDangerFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewYellowFish(): void {
     let i = this.getRandomInt(2, 9);
-    this.addYellowFish(1400, i * 48);
+    this.addYellowFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addNewOilSplash(): void {
     let i = this.getRandomInt(2, 7);
-    this.addOilSplash(1400, i * 48);
+    this.addOilSplash(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
   addBlueFish(x: number, y: number): void {
@@ -276,8 +286,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     const position = {
-      x: this.getRandomInt(1400, 1800),
-      y: this.getRandomInt(50, 320),
+      x: this.getRandomInt(SCREEN_WIDTH, SCREEN_WIDTH * 1.2),
+      y: this.getRandomInt(SCREEN_HEIGHT * .1, SCREEN_HEIGHT * .66),
     };
     this.getRandomInt(0, 2) ? this.addSpeedUpWorm(position) : this.addSlowDownWorm(position);
   }
@@ -358,8 +368,8 @@ export class GameScene extends Phaser.Scene {
     this.woods.add(
       new Wood({
           scene: this,
-          x: 1400,
-          y: 38,
+          x: SCREEN_WIDTH,
+          y: SCREEN_HEIGHT * .08,
           key: 'wood'
         },
         this.obstacleVelocities.wood)
@@ -418,7 +428,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.overlap(
       this.piranha,
       this.woods,
-      function () {
+      () => {
         this.piranha.setDead(true);
       },
       null,
