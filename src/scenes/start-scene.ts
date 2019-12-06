@@ -7,10 +7,10 @@ import {
 } from '../services/scaling.service';
 import { FilePaths } from "../assets/game-config";
 
-
 export class StartScene extends Phaser.Scene {
   isPlaying: boolean = false;
   piranhaStates = {};
+  addObstaclesFrequency = 0;
 
   constructor(private background: Phaser.GameObjects.Sprite) {
     super({
@@ -67,6 +67,7 @@ export class StartScene extends Phaser.Scene {
     );
     this.piranhaStates = await this.readJSON(FilePaths.piranhaPack);
     this.loadExistingPiranhaImageStates();
+    this.setObstaclesFreqency();
   }
 
   create(): void {
@@ -79,7 +80,7 @@ export class StartScene extends Phaser.Scene {
     startBtn.setScale(SCALE - (SCALE * .4));
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
-      this.scene.start('BeginScene', {piranha: this.getPiranhaState()});
+      this.scene.start('BeginScene', {piranha: this.getPiranhaState(), addObstaclesFreqency: this.addObstaclesFrequency});
     });
 
     const soundBtn = this.add.sprite(SCREEN_WIDTH * .95,SCREEN_HEIGHT * .11, 'volumeOn');
@@ -114,6 +115,12 @@ export class StartScene extends Phaser.Scene {
     Object.keys(PiranhaStates).forEach(state => {
       this.verifyImageURL(PiranhaStates[state], state);
     });
+  }
+
+  setObstaclesFreqency() {
+    if(SCREEN_WIDTH / SCREEN_HEIGHT < 0.9) {
+      this.addObstaclesFrequency = -1000;
+    }
   }
 
   verifyImageURL(state, stateName) {

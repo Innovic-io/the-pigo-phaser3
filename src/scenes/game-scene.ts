@@ -32,6 +32,8 @@ export class GameScene extends Phaser.Scene {
   private piranhaChangeImage = false;
   private  obstacleVelocities;
   piranhaStates;
+  addObstaclesFrequency;
+  obstacleTimers = [];
 
   gameTimeouts = [];
   eatFishSound;
@@ -49,6 +51,8 @@ export class GameScene extends Phaser.Scene {
 
   init(data) {
     this.piranhaStates = data.piranhaStates.piranha;
+    this.addObstaclesFrequency = data.piranhaStates.addObstaclesFreqency;
+
     this.registry.set('score', 0);
   }
 
@@ -115,6 +119,7 @@ export class GameScene extends Phaser.Scene {
     this.changePiranhaImage();
 
     this.setTimerForRemovingUnusedObjects();
+    this.timerForIncreaseSpeedOfObstaclesByTime();
 
   }
 
@@ -317,12 +322,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   setTimerForDangerFishes() {
-    this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.dangerFish,
-      callback: this.addNewDangerFish,
-      callbackScope: this,
-      loop: true
-    });
+    this.obstacleTimers.push(
+      this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.dangerFish + this.addObstaclesFrequency,
+        callback: this.addNewDangerFish,
+        callbackScope: this,
+        loop: true
+      })
+    )
   }
 
   addYellowFish(x: number, y: number): void {
@@ -338,12 +345,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   setTimerForBlueFishes() {
-    this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.blueFish,
-      callback: this.addNewBlueFish,
-      callbackScope: this,
-      loop: true
-    });
+    this.obstacleTimers.push(this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.blueFish + this.addObstaclesFrequency,
+        callback: this.addNewBlueFish,
+        callbackScope: this,
+        loop: true
+      })
+    )
   }
 
   setTimerForYellowFish() {
@@ -390,7 +398,7 @@ export class GameScene extends Phaser.Scene {
 
   setTimerForWoods() {
     this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.wood,
+      delay: GameConfigs.gameObjectsTimers.wood + this.addObstaclesFrequency,
       callback: this.addNewWood,
       callbackScope: this,
       loop: true
@@ -398,11 +406,32 @@ export class GameScene extends Phaser.Scene {
   }
 
   setTimerForOilSplashes() {
+    this.obstacleTimers.push(
+      this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.oilSplash + this.addObstaclesFrequency,
+        callback: this.addNewOilSplash,
+        callbackScope: this,
+        loop: true
+      })
+    )
+  }
+
+  timerForIncreaseSpeedOfObstaclesByTime() {
     this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.oilSplash,
-      callback: this.addNewOilSplash,
+      delay: 10000,
+      callback: this.increaseObstaclesSpeedOverTime,
       callbackScope: this,
       loop: true
+    });
+  }
+
+  increaseObstaclesSpeedOverTime() {
+    if(this.addObstaclesFrequency <= -300) {
+      return;
+    }
+    this.addObstaclesFrequency -= 50;
+    this.obstacleTimers.forEach(timer => {
+      timer.delay += this.addObstaclesFrequency;
     });
   }
 
