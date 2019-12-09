@@ -473,6 +473,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   increaseObstaclesSpeedOverTime() {
+    this.stopwatchCounter = 0;
     this.multipleScoreBy++;
     this.registry.values.score = this.registry.values.score * 2;
     this.scoreText.setText(this.registry.values.score);
