@@ -38,7 +38,7 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     // physics
     this.scene.physics.world.enable(this);
     this.body.setGravityY(1000);
-    this.body.setSize(this.body.width/3, this.body.height/3);
+    this.body.setSize(this.body.width/1.7, this.body.height/1.7);
 
 
     // input
