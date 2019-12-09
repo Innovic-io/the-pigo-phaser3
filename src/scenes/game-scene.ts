@@ -259,6 +259,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   setGameOptionsToDefault() {
+    this.speedUpBy = 0;
     this.piranha.setInSpeed(false);
     this.piranhaInMode = false;
   }
