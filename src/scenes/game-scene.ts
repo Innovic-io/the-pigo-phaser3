@@ -32,9 +32,12 @@ export class GameScene extends Phaser.Scene {
   private piranhaChangeImage = false;
   private  obstacleVelocities;
   piranhaStates;
-  addObstaclesFrequency;
+
   obstacleTimers = [];
   multipleScoreBy = 1;
+
+  addObstaclesFrequency;
+  obstaclesSpeedIncreasing = 0;
 
   stopwatchText: Phaser.GameObjects.BitmapText;
   stopwatchCounter = 0;
@@ -43,6 +46,8 @@ export class GameScene extends Phaser.Scene {
   eatFishSound;
   deathSound;
   playDeathSoundExecuted = false;
+
+  speedUpBy = 0;
 
   private isPlaying: boolean = false;
   private piranhaInMode = false;
@@ -83,10 +88,11 @@ export class GameScene extends Phaser.Scene {
 
     this.scoreText = this.add
       .bitmapText(
-        SCREEN_WIDTH - 0.10 * SCREEN_WIDTH,
+        SCREEN_WIDTH - 0.15 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
         'font',
-        this.registry.values.score
+        this.registry.values.score,
+        SCREEN_HEIGHT * 0.04
       )
       .setDepth(2);
 
@@ -95,7 +101,8 @@ export class GameScene extends Phaser.Scene {
         0.05 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
         'font',
-        'x' + this.stopwatchCounter
+        'x' + this.stopwatchCounter,
+        SCREEN_HEIGHT * 0.04
       )
       .setDepth(2);
 
@@ -179,10 +186,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   slowDown() {
+    this.speedUpBy = -GameConfigs.slowDownBy;
     this.piranhaInMode = true;
     this.updateBackground('background-slow-down', false);
     this.updatePiranha(this.piranhaStates.slowedPiranha);
-    this.decreaseObstaclesSpeeds(GameConfigs.slowDownBy);
+    this.increaseObstaclesSpeeds(-GameConfigs.slowDownBy);
     Phaser.Actions.Call(
       this.slowDownWorms.getChildren(),
       (worm) => worm.destroy(),
@@ -190,17 +198,19 @@ export class GameScene extends Phaser.Scene {
     );
     this.gameTimeouts.push(
       setTimeout(() => {
-        this.setGameOptionsToDefault();
+        this.restartAfterSpeedRun(GameConfigs.slowDownBy);
       }, GameConfigs.rewardTime)
     );
   }
 
   speedUp() {
+    this.speedUpBy = GameConfigs.speedUpBy;
     this.piranha.setInSpeed(true);
     this.piranhaInMode = true;
     this.updateBackground('background-speed-up', true);
     this.updatePiranha(this.piranhaStates.speedUpPiranha);
     this.increaseObstaclesSpeeds(GameConfigs.speedUpBy);
+
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
       function (worm) {
@@ -213,7 +223,7 @@ export class GameScene extends Phaser.Scene {
         this.registry.values.score += 10;
         this.addBonusText();
         this.scoreText.setText(this.registry.values.score);
-        this.setGameOptionsToDefault();
+        this.restartAfterSpeedRun(-GameConfigs.speedUpBy);
       }, GameConfigs.rewardTime)
     );
   }
@@ -250,7 +260,14 @@ export class GameScene extends Phaser.Scene {
 
   setGameOptionsToDefault() {
     this.piranha.setInSpeed(false);
-    this.resetObstacleVelocities();
+    this.piranhaInMode = false;
+  }
+
+  restartAfterSpeedRun(resetVelocityBy) {
+    this.piranha.setInSpeed(false);
+    this.increaseObstaclesSpeeds(resetVelocityBy);
+    this.speedUpBy = 0;
+    this.blueFishes.children.getArray().forEach(e=> console.log('speeds restarted', e.body.velocity.x));
     this.piranhaInMode = false;
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.background.setTexture('background');
@@ -259,6 +276,7 @@ export class GameScene extends Phaser.Scene {
 
   addNewBlueFish(): void {
     let i = this.getRandomInt(2, 9);
+    this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
     this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
@@ -285,7 +303,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'blue-fish'
         },
-        this.obstacleVelocities.blueFish)
+        this.obstacleVelocities.blueFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -297,7 +315,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'danger-fish'
         },
-        this.obstacleVelocities.dangerFish)
+        this.obstacleVelocities.dangerFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -369,7 +387,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'yellowFish'
         },
-        this.obstacleVelocities.yellowFish)
+        this.obstacleVelocities.yellowFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -409,7 +427,7 @@ export class GameScene extends Phaser.Scene {
           y: SCREEN_HEIGHT * .08,
           key: 'wood'
         },
-        this.obstacleVelocities.wood)
+        this.obstacleVelocities.wood + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -421,7 +439,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'oil-stein1'
         },
-        this.obstacleVelocities.oilSplash)
+        this.obstacleVelocities.oilSplash + this.speedUpBy)
     );
   }
 
@@ -455,25 +473,24 @@ export class GameScene extends Phaser.Scene {
   }
 
   increaseObstaclesSpeedOverTime() {
-    if(this.addObstaclesFrequency <= -300) {
+    this.multipleScoreBy++;
+    this.registry.values.score = this.registry.values.score * 2;
+    this.scoreText.setText(this.registry.values.score);
+
+    if(this.obstaclesSpeedIncreasing > 500) {
       return;
     }
-    this.addObstaclesFrequency -= 50;
+    this.obstaclesSpeedIncreasing += 50;
+    this.addObstaclesFrequency -= 18;
     this.obstacleTimers.forEach(timer => {
       timer.delay += this.addObstaclesFrequency;
     });
-    this.multipleScoreBy++;
-    this.registry.values.score = this.registry.values.score * this.multipleScoreBy;
-
-    this.scoreText.setText(this.registry.values.score);
   }
 
   changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
-    const speedUpVelocity = this.obstacleVelocities[obstacle] + increaseBy;
     listOfObstacles.children.entries.forEach(obstacle => {
-      obstacle.body.setVelocity(-speedUpVelocity, 0);
+      obstacle.body.setVelocity(obstacle.body.velocity.x - increaseBy, 0);
     });
-    this.obstacleVelocities[obstacle] = speedUpVelocity;
   }
 
   detectCollisions() {
@@ -574,6 +591,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.multipleScoreBy = 1;
     this.stopwatchCounter = 0;
+    this.obstaclesSpeedIncreasing = 0;
 
     if (this.speedUpWorms.children.entries.length) {
       Phaser.Actions.Call(

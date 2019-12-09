@@ -19,7 +19,7 @@ export const GameConfigs = {
     oilSplash: 8000
   },
   speedUpBy: 230,
-  slowDownBy: -100,
+  slowDownBy: 100,
   rewardTime: 10000,
   bonus10PtsDuration: 800,
   allowedSpaceBelowCanvas: 100
