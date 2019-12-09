@@ -267,7 +267,6 @@ export class GameScene extends Phaser.Scene {
     this.piranha.setInSpeed(false);
     this.increaseObstaclesSpeeds(resetVelocityBy);
     this.speedUpBy = 0;
-    this.blueFishes.children.getArray().forEach(e=> console.log('speeds restarted', e.body.velocity.x));
     this.piranhaInMode = false;
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.background.setTexture('background');
