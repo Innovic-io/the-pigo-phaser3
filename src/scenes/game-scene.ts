@@ -34,6 +34,10 @@ export class GameScene extends Phaser.Scene {
   piranhaStates;
   addObstaclesFrequency;
   obstacleTimers = [];
+  multipleScoreBy = 1;
+
+  stopwatchText: Phaser.GameObjects.BitmapText;
+  stopwatchCounter = 0;
 
   gameTimeouts = [];
   eatFishSound;
@@ -79,10 +83,19 @@ export class GameScene extends Phaser.Scene {
 
     this.scoreText = this.add
       .bitmapText(
-        CENTER_POINT.x,
+        SCREEN_WIDTH - 0.10 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
         'font',
         this.registry.values.score
+      )
+      .setDepth(2);
+
+    this.stopwatchText = this.add
+      .bitmapText(
+        0.05 * SCREEN_WIDTH,
+        SCREEN_HEIGHT * .06,
+        'font',
+        'x' + this.stopwatchCounter
       )
       .setDepth(2);
 
@@ -109,6 +122,8 @@ export class GameScene extends Phaser.Scene {
     // *****************************************************************
     // TIMER
     // *****************************************************************
+    this.setTimerForStopwatch();
+
     this.setTimerForBlueFishes();
     this.setTimerForDangerFishes();
     this.setTimerForWoods();
@@ -321,6 +336,20 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  setTimerForStopwatch() {
+      this.time.addEvent({
+        delay: 1000,
+        callback: this.tickStopwatch,
+        callbackScope: this,
+        loop: true
+      });
+  }
+
+  tickStopwatch() {
+    this.stopwatchCounter++;
+    this.stopwatchText.setText(this.stopwatchCounter.toString());
+  }
+
   setTimerForDangerFishes() {
     this.obstacleTimers.push(
       this.time.addEvent({
@@ -433,6 +462,10 @@ export class GameScene extends Phaser.Scene {
     this.obstacleTimers.forEach(timer => {
       timer.delay += this.addObstaclesFrequency;
     });
+    this.multipleScoreBy++;
+    this.registry.values.score = this.registry.values.score * this.multipleScoreBy;
+
+    this.scoreText.setText(this.registry.values.score);
   }
 
   changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
@@ -539,7 +572,8 @@ export class GameScene extends Phaser.Scene {
       this.deathSound.play();
       this.playDeathSoundExecuted = true;
     }
-    // this.deathSound = null;
+    this.multipleScoreBy = 1;
+    this.stopwatchCounter = 0;
 
     if (this.speedUpWorms.children.entries.length) {
       Phaser.Actions.Call(
