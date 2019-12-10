@@ -34,7 +34,6 @@ export class GameScene extends Phaser.Scene {
   piranhaStates;
 
   obstacleTimers = [];
-  multipleScoreBy = 1;
 
   addObstaclesFrequency;
   obstaclesSpeedIncreasing = 0;
@@ -262,6 +261,8 @@ export class GameScene extends Phaser.Scene {
     this.speedUpBy = 0;
     this.piranha.setInSpeed(false);
     this.piranhaInMode = false;
+    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
+    this.obstaclesSpeedIncreasing = 0;
   }
 
   restartAfterSpeedRun(resetVelocityBy) {
@@ -477,11 +478,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   increaseObstaclesSpeedOverTime() {
-    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
-    this.multipleScoreBy++;
-    this.registry.values.score = this.registry.values.score * 2;
-    this.scoreText.setText(this.registry.values.score);
-
     if(this.obstaclesSpeedIncreasing > 500) {
       return;
     }
@@ -594,8 +590,6 @@ export class GameScene extends Phaser.Scene {
       this.deathSound.play();
       this.playDeathSoundExecuted = true;
     }
-    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
-    this.obstaclesSpeedIncreasing = 0;
 
     if (this.speedUpWorms.children.entries.length) {
       Phaser.Actions.Call(
