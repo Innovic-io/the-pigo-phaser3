@@ -26,7 +26,7 @@ export class GameScene extends Phaser.Scene {
   oilSplashes: Phaser.GameObjects.Group;
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
-  private scoreText: Phaser.GameObjects.BitmapText;
+  private scoreText: Phaser.GameObjects.Text;
   private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
@@ -38,7 +38,7 @@ export class GameScene extends Phaser.Scene {
   addObstaclesFrequency;
   obstaclesSpeedIncreasing = 0;
 
-  stopwatchText: Phaser.GameObjects.BitmapText;
+  stopwatchText: Phaser.GameObjects.Text;
   stopwatchCounter = {seconds: 0, tenthOfASecond: 0};
 
   gameTimeouts = [];
@@ -86,22 +86,20 @@ export class GameScene extends Phaser.Scene {
     this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
-      .bitmapText(
-        SCREEN_WIDTH - 0.15 * SCREEN_WIDTH,
+      .text(
+        SCREEN_WIDTH - .10 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
-        'font',
         this.registry.values.score,
-        SCREEN_HEIGHT * 0.04
+        TextConfig.score
       )
       .setDepth(2);
 
     this.stopwatchText = this.add
-      .bitmapText(
+      .text(
         0.05 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
-        'font',
-        'x' + this.stopwatchCounter,
-        SCREEN_HEIGHT * 0.04
+        this.stopwatchCounter.seconds + ',' + this.stopwatchCounter.tenthOfASecond,
+        TextConfig.stopwatch
       )
       .setDepth(2);
 
@@ -370,7 +368,7 @@ export class GameScene extends Phaser.Scene {
       this.stopwatchCounter.seconds++;
       this.stopwatchCounter.tenthOfASecond = 0;
     }
-    this.stopwatchText.setText(this.stopwatchCounter.seconds.toString() + ', ' + this.stopwatchCounter.tenthOfASecond.toString());
+    this.stopwatchText.setText(this.stopwatchCounter.seconds + ',' + this.stopwatchCounter.tenthOfASecond);
   }
 
   setTimerForDangerFishes() {
