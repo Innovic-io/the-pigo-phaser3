@@ -40,7 +40,7 @@ export class GameScene extends Phaser.Scene {
   obstaclesSpeedIncreasing = 0;
 
   stopwatchText: Phaser.GameObjects.BitmapText;
-  stopwatchCounter = 0;
+  stopwatchCounter = {seconds: 0, tenthOfASecond: 0};
 
   gameTimeouts = [];
   eatFishSound;
@@ -356,7 +356,7 @@ export class GameScene extends Phaser.Scene {
 
   setTimerForStopwatch() {
       this.time.addEvent({
-        delay: 1000,
+        delay: 100,
         callback: this.tickStopwatch,
         callbackScope: this,
         loop: true
@@ -364,8 +364,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   tickStopwatch() {
-    this.stopwatchCounter++;
-    this.stopwatchText.setText(this.stopwatchCounter.toString());
+    this.stopwatchCounter.tenthOfASecond++;
+    if(this.stopwatchCounter.tenthOfASecond >= 10) {
+      this.stopwatchCounter.seconds++;
+      this.stopwatchCounter.tenthOfASecond = 0;
+    }
+    this.stopwatchText.setText(this.stopwatchCounter.seconds.toString() + ', ' + this.stopwatchCounter.tenthOfASecond.toString());
   }
 
   setTimerForDangerFishes() {
@@ -473,7 +477,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   increaseObstaclesSpeedOverTime() {
-    this.stopwatchCounter = 0;
+    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
     this.multipleScoreBy++;
     this.registry.values.score = this.registry.values.score * 2;
     this.scoreText.setText(this.registry.values.score);
@@ -590,8 +594,7 @@ export class GameScene extends Phaser.Scene {
       this.deathSound.play();
       this.playDeathSoundExecuted = true;
     }
-    this.multipleScoreBy = 1;
-    this.stopwatchCounter = 0;
+    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
     this.obstaclesSpeedIncreasing = 0;
 
     if (this.speedUpWorms.children.entries.length) {
