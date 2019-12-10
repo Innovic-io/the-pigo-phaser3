@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.Text;
+  speedUpText: Phaser.GameObjects.Text;
   private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
@@ -102,6 +103,16 @@ export class GameScene extends Phaser.Scene {
         TextConfig.stopwatch
       )
       .setDepth(2);
+
+    this.speedUpText = this.add
+      .text(
+        0,
+        0,
+        'LEVEL UP',
+        TextConfig.speedUpText
+      )
+      .setDepth(2);
+    this.speedUpText.setVisible(false);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
 
@@ -479,6 +490,13 @@ export class GameScene extends Phaser.Scene {
     if(this.obstaclesSpeedIncreasing > 500) {
       return;
     }
+
+    this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .06);
+    this.speedUpText.setVisible(true);
+    setTimeout(() => {
+      this.speedUpText.setVisible(false);
+    }, 2000);
+
     this.obstaclesSpeedIncreasing += 50;
     this.addObstaclesFrequency -= 18;
     this.obstacleTimers.forEach(timer => {

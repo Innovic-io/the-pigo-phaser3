@@ -53,6 +53,13 @@ export const TextConfig = {
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
+  },
+  speedUpText: {
+    fontSize: SCREEN_HEIGHT * .05,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 5
   }
 
 };
