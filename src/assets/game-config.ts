@@ -1,3 +1,5 @@
+import { SCREEN_HEIGHT } from "../services/scaling.service";
+
 export const GameConfigs = {
   backgroundInitialSpeed: 5,
   backgroundSpeedIncreaseBy: 4,
@@ -19,7 +21,7 @@ export const GameConfigs = {
     oilSplash: 8000
   },
   speedUpBy: 230,
-  slowDownBy: -100,
+  slowDownBy: 100,
   rewardTime: 10000,
   bonus10PtsDuration: 800,
   allowedSpaceBelowCanvas: 100
@@ -37,7 +39,29 @@ export const TextConfig = {
   bonus10PtsStyle: {
     fontSize: 35,
     fontFamily: 'Comic Sans MS',
-    color: '#000'  }
+    color: '#000'  },
+  stopwatch: {
+    fontSize: SCREEN_HEIGHT * .05,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 5
+  },
+  score: {
+    fontSize: SCREEN_HEIGHT * .05,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 5
+  },
+  speedUpText: {
+    fontSize: SCREEN_HEIGHT * .05,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 5
+  }
+
 };
 
 export const FilePaths = {

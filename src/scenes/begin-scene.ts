@@ -2,7 +2,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, SCALE, CENTER_POINT } from '../services/sc
 
 export class BeginScene extends Phaser.Scene {
   piranha;
-  piranhaImagesStates;
+  piranhaConfigs;
   piranhaChangeImage = true;
 
   constructor(private background: Phaser.GameObjects.TileSprite) {
@@ -12,7 +12,7 @@ export class BeginScene extends Phaser.Scene {
   }
 
   init(data) {
-    this.piranhaImagesStates = data;
+    this.piranhaConfigs = data;
   }
 
     preload(): void {
@@ -31,11 +31,11 @@ export class BeginScene extends Phaser.Scene {
         this.changePiranhaImage();
 
         this.input.keyboard.on('keydown', event => {
-            this.scene.start('GameScene', { piranhaStates: this.piranhaImagesStates });
+            this.scene.start('GameScene', { piranhaStates: this.piranhaConfigs});
         });
 
       this.input.on('pointerdown', event => {
-        this.scene.start('GameScene', {piranhaStates: this.piranhaImagesStates});
+        this.scene.start('GameScene', {piranhaStates: this.piranhaConfigs});
       });
     }
 
@@ -50,7 +50,7 @@ export class BeginScene extends Phaser.Scene {
 
     togglePiranhaImage() {
         this.piranhaChangeImage ?
-            this.piranha.setTexture(this.piranhaImagesStates.piranha.blinkingPiranha) : this.piranha.setTexture(this.piranhaImagesStates.piranha.piranha);
+            this.piranha.setTexture(this.piranhaConfigs.piranha.blinkingPiranha) : this.piranha.setTexture(this.piranhaConfigs.piranha.piranha);
         this.piranhaChangeImage = !this.piranhaChangeImage;
     }
 

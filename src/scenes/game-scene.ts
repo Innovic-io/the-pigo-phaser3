@@ -26,17 +26,28 @@ export class GameScene extends Phaser.Scene {
   oilSplashes: Phaser.GameObjects.Group;
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
-  private scoreText: Phaser.GameObjects.BitmapText;
+  private scoreText: Phaser.GameObjects.Text;
+  speedUpText: Phaser.GameObjects.Text;
   private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
   private  obstacleVelocities;
   piranhaStates;
 
+  obstacleTimers = [];
+
+  addObstaclesFrequency;
+  obstaclesSpeedIncreasing = 0;
+
+  stopwatchText: Phaser.GameObjects.Text;
+  stopwatchCounter = {seconds: 0, tenthOfASecond: 0};
+
   gameTimeouts = [];
   eatFishSound;
   deathSound;
   playDeathSoundExecuted = false;
+
+  speedUpBy = 0;
 
   private isPlaying: boolean = false;
   private piranhaInMode = false;
@@ -49,6 +60,8 @@ export class GameScene extends Phaser.Scene {
 
   init(data) {
     this.piranhaStates = data.piranhaStates.piranha;
+    this.addObstaclesFrequency = data.piranhaStates.addObstaclesFreqency;
+
     this.registry.set('score', 0);
   }
 
@@ -74,13 +87,32 @@ export class GameScene extends Phaser.Scene {
     this.playDeathSoundExecuted = false;
 
     this.scoreText = this.add
-      .bitmapText(
-        CENTER_POINT.x,
+      .text(
+        SCREEN_WIDTH - .10 * SCREEN_WIDTH,
         SCREEN_HEIGHT * .06,
-        'font',
-        this.registry.values.score
+        this.registry.values.score,
+        TextConfig.score
       )
       .setDepth(2);
+
+    this.stopwatchText = this.add
+      .text(
+        0.05 * SCREEN_WIDTH,
+        SCREEN_HEIGHT * .06,
+        this.stopwatchCounter.seconds + ',' + this.stopwatchCounter.tenthOfASecond,
+        TextConfig.stopwatch
+      )
+      .setDepth(2);
+
+    this.speedUpText = this.add
+      .text(
+        0,
+        0,
+        'LEVEL UP',
+        TextConfig.speedUpText
+      )
+      .setDepth(2);
+    this.speedUpText.setVisible(false);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
 
@@ -105,6 +137,8 @@ export class GameScene extends Phaser.Scene {
     // *****************************************************************
     // TIMER
     // *****************************************************************
+    this.setTimerForStopwatch();
+
     this.setTimerForBlueFishes();
     this.setTimerForDangerFishes();
     this.setTimerForWoods();
@@ -115,6 +149,7 @@ export class GameScene extends Phaser.Scene {
     this.changePiranhaImage();
 
     this.setTimerForRemovingUnusedObjects();
+    this.timerForIncreaseSpeedOfObstaclesByTime();
 
   }
 
@@ -159,10 +194,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   slowDown() {
+    this.speedUpBy = -GameConfigs.slowDownBy;
     this.piranhaInMode = true;
     this.updateBackground('background-slow-down', false);
     this.updatePiranha(this.piranhaStates.slowedPiranha);
-    this.decreaseObstaclesSpeeds(GameConfigs.slowDownBy);
+    this.increaseObstaclesSpeeds(-GameConfigs.slowDownBy);
     Phaser.Actions.Call(
       this.slowDownWorms.getChildren(),
       (worm) => worm.destroy(),
@@ -170,17 +206,19 @@ export class GameScene extends Phaser.Scene {
     );
     this.gameTimeouts.push(
       setTimeout(() => {
-        this.setGameOptionsToDefault();
+        this.restartAfterSpeedRun(GameConfigs.slowDownBy);
       }, GameConfigs.rewardTime)
     );
   }
 
   speedUp() {
+    this.speedUpBy = GameConfigs.speedUpBy;
     this.piranha.setInSpeed(true);
     this.piranhaInMode = true;
     this.updateBackground('background-speed-up', true);
     this.updatePiranha(this.piranhaStates.speedUpPiranha);
     this.increaseObstaclesSpeeds(GameConfigs.speedUpBy);
+
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
       function (worm) {
@@ -193,7 +231,7 @@ export class GameScene extends Phaser.Scene {
         this.registry.values.score += 10;
         this.addBonusText();
         this.scoreText.setText(this.registry.values.score);
-        this.setGameOptionsToDefault();
+        this.restartAfterSpeedRun(-GameConfigs.speedUpBy);
       }, GameConfigs.rewardTime)
     );
   }
@@ -229,8 +267,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   setGameOptionsToDefault() {
+    this.speedUpBy = 0;
     this.piranha.setInSpeed(false);
-    this.resetObstacleVelocities();
+    this.piranhaInMode = false;
+    Object.keys(this.stopwatchCounter).forEach(counter => this.stopwatchCounter[counter] = 0);
+    this.obstaclesSpeedIncreasing = 0;
+  }
+
+  restartAfterSpeedRun(resetVelocityBy) {
+    this.piranha.setInSpeed(false);
+    this.increaseObstaclesSpeeds(resetVelocityBy);
+    this.speedUpBy = 0;
     this.piranhaInMode = false;
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.background.setTexture('background');
@@ -239,6 +286,7 @@ export class GameScene extends Phaser.Scene {
 
   addNewBlueFish(): void {
     let i = this.getRandomInt(2, 9);
+    this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
     this.addBlueFish(SCREEN_WIDTH, i * GAME_HEIGHT_BLOCK);
   }
 
@@ -265,7 +313,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'blue-fish'
         },
-        this.obstacleVelocities.blueFish)
+        this.obstacleVelocities.blueFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -277,7 +325,7 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'danger-fish'
         },
-        this.obstacleVelocities.dangerFish)
+        this.obstacleVelocities.dangerFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -316,13 +364,33 @@ export class GameScene extends Phaser.Scene {
     );
   }
 
+  setTimerForStopwatch() {
+      this.time.addEvent({
+        delay: 100,
+        callback: this.tickStopwatch,
+        callbackScope: this,
+        loop: true
+      });
+  }
+
+  tickStopwatch() {
+    this.stopwatchCounter.tenthOfASecond++;
+    if(this.stopwatchCounter.tenthOfASecond >= 10) {
+      this.stopwatchCounter.seconds++;
+      this.stopwatchCounter.tenthOfASecond = 0;
+    }
+    this.stopwatchText.setText(this.stopwatchCounter.seconds + ',' + this.stopwatchCounter.tenthOfASecond);
+  }
+
   setTimerForDangerFishes() {
-    this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.dangerFish,
-      callback: this.addNewDangerFish,
-      callbackScope: this,
-      loop: true
-    });
+    this.obstacleTimers.push(
+      this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.dangerFish + this.addObstaclesFrequency,
+        callback: this.addNewDangerFish,
+        callbackScope: this,
+        loop: true
+      })
+    )
   }
 
   addYellowFish(x: number, y: number): void {
@@ -333,17 +401,18 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'yellowFish'
         },
-        this.obstacleVelocities.yellowFish)
+        this.obstacleVelocities.yellowFish + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
   setTimerForBlueFishes() {
-    this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.blueFish,
-      callback: this.addNewBlueFish,
-      callbackScope: this,
-      loop: true
-    });
+    this.obstacleTimers.push(this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.blueFish + this.addObstaclesFrequency,
+        callback: this.addNewBlueFish,
+        callbackScope: this,
+        loop: true
+      })
+    )
   }
 
   setTimerForYellowFish() {
@@ -372,7 +441,7 @@ export class GameScene extends Phaser.Scene {
           y: SCREEN_HEIGHT * .08,
           key: 'wood'
         },
-        this.obstacleVelocities.wood)
+        this.obstacleVelocities.wood + this.obstaclesSpeedIncreasing + this.speedUpBy)
     );
   }
 
@@ -384,13 +453,13 @@ export class GameScene extends Phaser.Scene {
           y: y,
           key: 'oil-stein1'
         },
-        this.obstacleVelocities.oilSplash)
+        this.obstacleVelocities.oilSplash + this.speedUpBy)
     );
   }
 
   setTimerForWoods() {
     this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.wood,
+      delay: GameConfigs.gameObjectsTimers.wood + this.addObstaclesFrequency,
       callback: this.addNewWood,
       callbackScope: this,
       loop: true
@@ -398,20 +467,47 @@ export class GameScene extends Phaser.Scene {
   }
 
   setTimerForOilSplashes() {
+    this.obstacleTimers.push(
+      this.time.addEvent({
+        delay: GameConfigs.gameObjectsTimers.oilSplash + this.addObstaclesFrequency,
+        callback: this.addNewOilSplash,
+        callbackScope: this,
+        loop: true
+      })
+    )
+  }
+
+  timerForIncreaseSpeedOfObstaclesByTime() {
     this.time.addEvent({
-      delay: GameConfigs.gameObjectsTimers.oilSplash,
-      callback: this.addNewOilSplash,
+      delay: 10000,
+      callback: this.increaseObstaclesSpeedOverTime,
       callbackScope: this,
       loop: true
     });
   }
 
-  changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
-    const speedUpVelocity = this.obstacleVelocities[obstacle] + increaseBy;
-    listOfObstacles.children.entries.forEach(obstacle => {
-      obstacle.body.setVelocity(-speedUpVelocity, 0);
+  increaseObstaclesSpeedOverTime() {
+    if(this.obstaclesSpeedIncreasing > 500) {
+      return;
+    }
+
+    this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .06);
+    this.speedUpText.setVisible(true);
+    setTimeout(() => {
+      this.speedUpText.setVisible(false);
+    }, 2000);
+
+    this.obstaclesSpeedIncreasing += 50;
+    this.addObstaclesFrequency -= 18;
+    this.obstacleTimers.forEach(timer => {
+      timer.delay += this.addObstaclesFrequency;
     });
-    this.obstacleVelocities[obstacle] = speedUpVelocity;
+  }
+
+  changeSpeedOfObstacle(listOfObstacles, obstacle, increaseBy) {
+    listOfObstacles.children.entries.forEach(obstacle => {
+      obstacle.body.setVelocity(obstacle.body.velocity.x - increaseBy, 0);
+    });
   }
 
   detectCollisions() {
@@ -510,7 +606,6 @@ export class GameScene extends Phaser.Scene {
       this.deathSound.play();
       this.playDeathSoundExecuted = true;
     }
-    // this.deathSound = null;
 
     if (this.speedUpWorms.children.entries.length) {
       Phaser.Actions.Call(
