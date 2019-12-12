@@ -60,7 +60,14 @@ export const TextConfig = {
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
-  }
+  },
+  imageButtonText: {
+    fontSize: SCREEN_HEIGHT * .03,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 1
+  },
 
 };
 

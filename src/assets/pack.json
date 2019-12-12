@@ -24,6 +24,16 @@
       },
       {
         "type": "image",
+        "key": "splash",
+        "url": "./src/assets/images/splash.png"
+      },
+      {
+        "type": "image",
+        "key": "piranha-button",
+        "url": "./src/assets/images/piranha_button.png"
+      },
+      {
+        "type": "image",
         "key": "piranha",
         "url": "./src/assets/images/piranha.png"
       },

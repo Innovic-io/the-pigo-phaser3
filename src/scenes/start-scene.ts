@@ -80,7 +80,7 @@ export class StartScene extends Phaser.Scene {
     startBtn.setScale(SCALE - (SCALE * .4));
     startBtn.setInteractive();
     startBtn.on('pointerdown', () => {
-      this.scene.start('BeginScene', {piranha: this.getPiranhaState(), addObstaclesFreqency: this.addObstaclesFrequency});
+      this.scene.start('BeginScene', {piranha: this.getPiranhaState(), addObstaclesFrequency: this.addObstaclesFrequency});
     });
 
     const soundBtn = this.add.sprite(SCREEN_WIDTH * .95,SCREEN_HEIGHT * .11, 'volumeOn');

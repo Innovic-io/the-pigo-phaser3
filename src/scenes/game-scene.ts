@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   private yellowFishes: Phaser.GameObjects.Group;
   private background: Phaser.GameObjects.TileSprite;
   private scoreText: Phaser.GameObjects.Text;
+  highScoreText;
   speedUpText: Phaser.GameObjects.Text;
   private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
@@ -39,13 +40,15 @@ export class GameScene extends Phaser.Scene {
   addObstaclesFrequency;
   obstaclesSpeedIncreasing = 0;
 
+  stopwatch;
   stopwatchText: Phaser.GameObjects.Text;
   stopwatchCounter = {seconds: 0, tenthOfASecond: 0};
 
+  increaseObstaclesSpeedsTimer;
   gameTimeouts = [];
   eatFishSound;
   deathSound;
-  playDeathSoundExecuted = false;
+  gameOverExecuted = false;
 
   speedUpBy = 0;
 
@@ -60,7 +63,7 @@ export class GameScene extends Phaser.Scene {
 
   init(data) {
     this.piranhaStates = data.piranhaStates.piranha;
-    this.addObstaclesFrequency = data.piranhaStates.addObstaclesFreqency;
+    this.addObstaclesFrequency = data.piranhaStates.addObstaclesFrequency;
 
     this.registry.set('score', 0);
   }
@@ -81,10 +84,9 @@ export class GameScene extends Phaser.Scene {
     this.background = this.add
       .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
-
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
-    this.playDeathSoundExecuted = false;
+    this.gameOverExecuted = false;
 
     this.scoreText = this.add
       .text(
@@ -365,7 +367,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   setTimerForStopwatch() {
-      this.time.addEvent({
+      this.stopwatch = this.time.addEvent({
         delay: 100,
         callback: this.tickStopwatch,
         callbackScope: this,
@@ -478,7 +480,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   timerForIncreaseSpeedOfObstaclesByTime() {
-    this.time.addEvent({
+    this.increaseObstaclesSpeedsTimer = this.time.addEvent({
       delay: 10000,
       callback: this.increaseObstaclesSpeedOverTime,
       callbackScope: this,
@@ -498,9 +500,8 @@ export class GameScene extends Phaser.Scene {
     }, 2000);
 
     this.obstaclesSpeedIncreasing += 50;
-    this.addObstaclesFrequency -= 18;
     this.obstacleTimers.forEach(timer => {
-      timer.delay += this.addObstaclesFrequency;
+      timer.delay += -150;
     });
   }
 
@@ -600,11 +601,18 @@ export class GameScene extends Phaser.Scene {
   }
 
   endGame() {
+    localStorage.setItem('currentScore', (
+      this.countHighScore()
+    ).toString());
     this.piranha.setTexture(this.piranhaStates.deadPiranha);
     this.clearTimeoutsValues();
-    if (!this.playDeathSoundExecuted) {
+
+    this.stopTimers();
+    if (!this.gameOverExecuted) {
       this.deathSound.play();
-      this.playDeathSoundExecuted = true;
+      this.gameOverExecuted = true;
+
+      this.showHighScore();
     }
 
     if (this.speedUpWorms.children.entries.length) {
@@ -635,10 +643,7 @@ export class GameScene extends Phaser.Scene {
       );
     }
 
-    if (this.piranha.y > this.sys.canvas.height) {
-      this.setGameOptionsToDefault();
-      this.scene.start('BeginScene');
-    }
+    this.setGameOptionsToDefault();
   }
 
   private resetObstacleVelocities() {
@@ -693,6 +698,104 @@ export class GameScene extends Phaser.Scene {
           object.destroy();
         }
     });
+  }
+
+  stopTimers() {
+    this.stopwatch.paused = true;
+    this.increaseObstaclesSpeedsTimer.paused = true;
+  }
+
+  showHighScore() {
+    const splashImage = this.add.image(CENTER_POINT.x, CENTER_POINT.y, 'splash').setDepth(3);
+
+    this.addGameNavigationButton({
+        x: splashImage.x - (splashImage.width * .8) / 2,
+        y: splashImage.y - (splashImage.height * .7) / 2
+      },
+      'piranha-button',
+      this.startBeginScene,
+      {x: false, y: false},
+      {
+        position: {
+          x: splashImage.x - (splashImage.width * .8) / 2 - 25,
+          y: splashImage.y - (splashImage.height * .7) / 2 - 15,
+        },
+        text: 'RESET'
+      }
+    );
+
+    this.addGameNavigationButton({
+        x: splashImage.x + (splashImage.width * .8) / 2,
+        y: splashImage.y - (splashImage.height * .7) / 2,
+      },
+      'piranha-button',
+      this.startStartScene,
+      { x: true, y: false },
+      {
+        position: {
+          x: splashImage.x + (splashImage.width * .8) / 2 - 50,
+          y: splashImage.y - (splashImage.height * .7) / 2 - 30,
+        },
+        text: 'MAIN\nMENU'
+      }
+    );
+
+    this.highScoreText = this.add
+      .text(
+        CENTER_POINT.x,
+        CENTER_POINT.y,
+        'SCORE: ' + this.countHighScore().score + '\nHIGH SCORE: ' + this.countHighScore().highScore,
+        TextConfig.score
+      )
+      .setDepth(4);
+
+    this.highScoreText.setPosition(CENTER_POINT.x - this.highScoreText.width/2, CENTER_POINT.y - this.highScoreText.height/2);
+  }
+
+  countHighScore() {
+    const score = this.registry.values.score * (Math.floor(this.stopwatchCounter.seconds/10) + 1);
+    if (score > this.highScore) {
+      localStorage.setItem('highScore', score.toString());
+    }
+    return { score: score, highScore: this.highScore};
+  }
+
+  get highScore() {
+    if(!localStorage.getItem('highScore')) {
+      localStorage.setItem('highScore', '0');
+    }
+    return parseInt(localStorage.getItem('highScore'))
+  }
+
+  addGameNavigationButton(position, texture, callback, flip, text) {
+    const piranhaButtonRestart = this.add.image(
+      position.x,
+      position.y, texture).setDepth(4).setFlip(flip.x, flip.y);
+
+    //Refactor
+    piranhaButtonRestart.setInteractive().on('pointerdown', () => {
+    });
+    piranhaButtonRestart.on('pointerup', () => {
+      callback(this, this.piranhaStates, this.addObstaclesFrequency);
+    });
+
+    const buttonText = this.add
+      .text(
+        text.position.x,
+        text.position.y,
+        text.text,
+        TextConfig.imageButtonText
+      )
+      .setDepth(4);
+  }
+
+  startBeginScene(game, piranhaStates, addObstaclesFrequency) {
+    game.scene.start('BeginScene',
+      { piranha: piranhaStates, addObstaclesFrequency: addObstaclesFrequency});
+  }
+
+  startStartScene(game) {
+    game.scene.start('StartScene');
   }
 
   clearTimeoutsValues() {
