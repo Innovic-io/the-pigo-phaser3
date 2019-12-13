@@ -1,4 +1,4 @@
-import { SCREEN_HEIGHT } from "../services/scaling.service";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../services/scaling.service";
 
 export const GameConfigs = {
   backgroundInitialSpeed: 5,
@@ -32,7 +32,7 @@ export const OilSplashConfigs = {
 };
 
 export const PiranhaConfig = {
-  velocity: 400
+  velocity: calculatePiranhaVelocity()
 };
 
 export const TextConfig = {
@@ -67,10 +67,15 @@ export const TextConfig = {
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 1
-  },
-
+  }
 };
 
 export const FilePaths = {
   piranhaPack: './src/assets/piranha-pack.json'
 };
+
+function calculatePiranhaVelocity() {
+  let addVelocity = (SCREEN_WIDTH/ SCREEN_HEIGHT);
+  addVelocity = addVelocity >= 1 ? -addVelocity  * 10 : (1/addVelocity)  * 10;
+  return   400 + addVelocity;
+}

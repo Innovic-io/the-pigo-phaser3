@@ -40,7 +40,6 @@ export class Piranha extends Phaser.GameObjects.Sprite {
     this.body.setGravityY(1000);
     this.body.setSize(this.body.width/1.7, this.body.height/1.7);
 
-
     // input
     this.jumpKey = this.scene.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
