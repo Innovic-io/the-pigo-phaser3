@@ -7,8 +7,9 @@ export const GAME_MIN_HEIGHT = 600;
 export const SCALE_WIDTH = SCREEN_WIDTH / GAME_MIN_WIDTH;
 export const SCALE_HEIGHT = SCREEN_HEIGHT / GAME_MIN_HEIGHT;
 
-export const SCALE = SCREEN_WIDTH >= SCREEN_HEIGHT ? SCALE_HEIGHT : SCALE_WIDTH;
+export const SCALE = (SCALE_WIDTH >= SCALE_HEIGHT) ? SCALE_HEIGHT : SCALE_WIDTH;
 
+export const diagonal = Math.pow(Math.pow(SCREEN_WIDTH, 2) + Math.pow(SCREEN_HEIGHT, 2), 1/2);
 
 export const START_BACKGROUND_SPRITE = {
   x: 0,

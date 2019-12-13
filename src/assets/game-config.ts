@@ -1,4 +1,4 @@
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../services/scaling.service";
+import { diagonal, SCREEN_HEIGHT, SCREEN_WIDTH } from "../services/scaling.service";
 
 export const GameConfigs = {
   backgroundInitialSpeed: 5,
@@ -24,7 +24,7 @@ export const GameConfigs = {
   slowDownBy: 100,
   rewardTime: 10000,
   bonus10PtsDuration: 800,
-  allowedSpaceBelowCanvas: 100
+  allowedSpaceBelowCanvas: 120
 };
 
 export const OilSplashConfigs = {
@@ -41,28 +41,28 @@ export const TextConfig = {
     fontFamily: 'Comic Sans MS',
     color: '#000'  },
   stopwatch: {
-    fontSize: SCREEN_HEIGHT * .05,
+    fontSize: diagonal * 0.02,
     fontFamily: 'Comic Sans MS',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   score: {
-    fontSize: SCREEN_HEIGHT * .05,
+    fontSize: diagonal * .02,
     fontFamily: 'Comic Sans MS',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   speedUpText: {
-    fontSize: SCREEN_HEIGHT * .05,
+    fontSize: diagonal * .03,
     fontFamily: 'Comic Sans MS',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   imageButtonText: {
-    fontSize: SCREEN_HEIGHT * .03,
+    fontSize: diagonal * .016,
     fontFamily: 'Comic Sans MS',
     color: '#ffffff',
     stroke: '#000000',
