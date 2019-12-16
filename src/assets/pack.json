@@ -29,8 +29,13 @@
       },
       {
         "type": "image",
-        "key": "piranha-button",
-        "url": "./src/assets/images/piranha_button.png"
+        "key": "main_menu_button",
+        "url": "./src/assets/images/main_menu_button.png"
+      },
+      {
+        "type": "image",
+        "key": "restart",
+        "url": "./src/assets/images/restart.png"
       },
       {
         "type": "image",
@@ -142,6 +147,11 @@
         "type": "image",
         "key": "startGame",
         "url": "./src/assets/images/press-to-start.png"
+      },
+      {
+        "type": "image",
+        "key": "gameOver",
+        "url": "./src/assets/images/game_over.png"
       },
       {
         "type": "audio",

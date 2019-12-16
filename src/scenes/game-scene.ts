@@ -7,7 +7,7 @@ import { WormSpeedUp } from '../objects/WormSpeedUp';
 import { WormSlowDown } from '../objects/WormSlowDown';
 import { OilSplash } from '../objects/OilSplash';
 
-import { GameConfigs, TextConfig } from '../assets/game-config';
+import { GameConfigs, ImageScaling, TextConfig } from '../assets/game-config';
 import {
   CENTER_POINT, diagonal,
   GAME_HEIGHT_BLOCK,
@@ -708,25 +708,31 @@ export class GameScene extends Phaser.Scene {
   }
 
   showHighScore() {
-    const splashImage = this.add.image(CENTER_POINT.x, CENTER_POINT.y, 'splash').setDepth(3).setScale(SCALE);
+    const splashImage = this.add.image(CENTER_POINT.x, CENTER_POINT.y, 'splash')
+      .setDepth(3)
+      .setScale(ImageScaling.splashImage);
+
+    const gameOver =this.add.image(
+      CENTER_POINT.x,
+      splashImage.getCenter().y - (splashImage.displayHeight * 0.7) / 2,
+      'gameOver')
+      .setDepth(3)
+      .setScale(ImageScaling.gameOver);
+
     this.addGameNavigationButton({
-        x: splashImage.getTopLeft().x,
-        y: splashImage.getTopLeft().y
+        x: splashImage.getTopLeft().x + splashImage.displayWidth * ImageScaling.navigationButtons.alignmentFromSide,
+        y: splashImage.getTopLeft().y + splashImage.displayHeight * ImageScaling.navigationButtons.alignmentFromTop
       },
-      'piranha-button',
+      'restart',
       this.startBeginScene,
-      {x: false, y: false},
-      'RESET'
     );
 
     this.addGameNavigationButton({
-        x: splashImage.getTopRight().x,
-        y: splashImage.getTopRight().y,
+        x: splashImage.getTopRight().x - splashImage.displayWidth * ImageScaling.navigationButtons.alignmentFromSide,
+        y: splashImage.getTopRight().y + splashImage.displayHeight * ImageScaling.navigationButtons.alignmentFromTop,
       },
-      'piranha-button',
-      this.startStartScene,
-      { x: true, y: false },
-      'MAIN\nMENU'
+      'main_menu_button',
+      this.startStartScene
     );
 
     this.highScoreText = this.add
@@ -734,9 +740,10 @@ export class GameScene extends Phaser.Scene {
         CENTER_POINT.x,
         CENTER_POINT.y,
         'SCORE: ' + this.countHighScore().score + '\nHIGH SCORE: ' + this.countHighScore().highScore,
-        TextConfig.score
+        TextConfig.highScore
       )
-      .setDepth(4);
+      .setDepth(4)
+      .setAlign('center');
 
     this.highScoreText.setPosition(CENTER_POINT.x - this.highScoreText.width/2, CENTER_POINT.y - this.highScoreText.height/2);
   }
@@ -756,10 +763,10 @@ export class GameScene extends Phaser.Scene {
     return parseInt(localStorage.getItem('highScore'))
   }
 
-  addGameNavigationButton(position, texture, callback, flip, text) {
+  addGameNavigationButton(position, texture, callback) {
     const piranhaButtonRestart = this.add.image(
       position.x,
-      position.y, texture).setDepth(4).setFlip(flip.x, flip.y).setScale(SCALE * 1.3);
+      position.y, texture).setDepth(4).setScale(SCALE * 0.9);
 
     //Refactor
     piranhaButtonRestart.setInteractive().on('pointerdown', () => {
@@ -767,19 +774,6 @@ export class GameScene extends Phaser.Scene {
     piranhaButtonRestart.on('pointerup', () => {
       callback(this, this.piranhaStates, this.addObstaclesFrequency);
     });
-
-    const buttonText = this.add
-      .text(
-        piranhaButtonRestart.getCenter().x,
-        piranhaButtonRestart.getCenter().y,
-        text,
-        TextConfig.imageButtonText
-      )
-      .setDepth(4);
-    buttonText.setPosition(
-      piranhaButtonRestart.getCenter().x - (buttonText.width / 2),
-      piranhaButtonRestart.getCenter().y - (buttonText.height / 2)
-    )
   }
 
   startBeginScene(game, piranhaStates, addObstaclesFrequency) {

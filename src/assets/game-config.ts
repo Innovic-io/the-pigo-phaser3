@@ -1,4 +1,4 @@
-import { diagonal, SCREEN_HEIGHT, SCREEN_WIDTH } from "../services/scaling.service";
+import { diagonal, SCALE, SCREEN_HEIGHT, SCREEN_WIDTH } from "../services/scaling.service";
 
 export const GameConfigs = {
   backgroundInitialSpeed: 5,
@@ -54,6 +54,13 @@ export const TextConfig = {
     stroke: '#000000',
     strokeThickness: 5
   },
+  highScore: {
+    fontSize: diagonal * .04,
+    fontFamily: 'Comic Sans MS',
+    color: '#ffffff',
+    stroke: '#000000',
+    strokeThickness: 5
+  },
   speedUpText: {
     fontSize: diagonal * .03,
     fontFamily: 'Comic Sans MS',
@@ -72,6 +79,15 @@ export const TextConfig = {
 
 export const FilePaths = {
   piranhaPack: './src/assets/piranha-pack.json'
+};
+
+export const ImageScaling = {
+  splashImage: SCALE * 1.3,
+  navigationButtons: {
+    alignmentFromTop: 0.13,
+    alignmentFromSide: 0.07,
+  },
+  gameOver: SCALE * 0.8
 };
 
 function calculatePiranhaVelocity() {
