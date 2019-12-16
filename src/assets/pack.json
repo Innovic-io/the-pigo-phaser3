@@ -154,6 +154,11 @@
         "url": "./src/assets/images/game_over.png"
       },
       {
+        "type": "image",
+        "key": "plus10",
+        "url": "./src/assets/images/plus10.png"
+      },
+      {
         "type": "audio",
         "key": "pigoLoop",
         "url": "./src/assets/audio/ingame_bg_amb.mp3"

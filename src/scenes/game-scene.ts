@@ -29,7 +29,6 @@ export class GameScene extends Phaser.Scene {
   private scoreText: Phaser.GameObjects.Text;
   highScoreText;
   speedUpText: Phaser.GameObjects.Text;
-  private bonusPointsText: Phaser.GameObjects.Text;
   private backgroundMovementSpeed;
   private piranhaChangeImage = false;
   private  obstacleVelocities;
@@ -588,16 +587,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   addBonusText() {
-    this.bonusPointsText = this.add
-      .text(
-        this.piranha.x+10,
-        this.piranha.y-10,
-        '+10',
-        TextConfig.bonus10PtsStyle
-      )
-      .setDepth(2);
+    const bonus10ptsImage = this.add.sprite(
+      this.piranha.x + SCREEN_WIDTH * 0.09,
+      this.piranha.y - SCREEN_HEIGHT * 0.04, 'plus10')
+      .setDepth(3)
+      .setScale(ImageScaling.splashImage);
+    this.physics.world.enable(bonus10ptsImage);
+    bonus10ptsImage.body.setVelocity(-120);
     this.gameTimeouts.push(setTimeout(() => {
-      this.bonusPointsText.destroy();
+        bonus10ptsImage.destroy();
     },GameConfigs.bonus10PtsDuration)
     )
   }

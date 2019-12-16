@@ -23,7 +23,7 @@ export const GameConfigs = {
   speedUpBy: 230,
   slowDownBy: 100,
   rewardTime: 10000,
-  bonus10PtsDuration: 800,
+  bonus10PtsDuration: 1000,
   allowedSpaceBelowCanvas: 120
 };
 
