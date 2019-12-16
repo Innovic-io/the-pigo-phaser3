@@ -110,10 +110,11 @@ export class GameScene extends Phaser.Scene {
       .text(
         0,
         0,
-        'LEVEL UP',
+        'LEVEL UP\nx' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()),
         TextConfig.speedUpText
       )
       .setDepth(2);
+    this.speedUpText.setAlign('center');
     this.speedUpText.setVisible(false);
 
     this.blueFishes = this.add.group({ classType: BlueFish });
@@ -481,7 +482,7 @@ export class GameScene extends Phaser.Scene {
 
   timerForIncreaseSpeedOfObstaclesByTime() {
     this.increaseObstaclesSpeedsTimer = this.time.addEvent({
-      delay: 10000,
+      delay: 5000,
       callback: this.increaseObstaclesSpeedOverTime,
       callbackScope: this,
       loop: true
@@ -493,7 +494,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .06);
+    this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .03);
+    this.speedUpText.setText('LEVEL UP\nx' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()));
     this.speedUpText.setVisible(true);
     setTimeout(() => {
       this.speedUpText.setVisible(false);
@@ -740,7 +742,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   countHighScore() {
-    const score = this.registry.values.score * (Math.floor(this.stopwatchCounter.seconds/10) + 1);
+    const score = this.registry.values.score * (Math.floor(this.stopwatchCounter.seconds/5) + 1);
     if (score > this.highScore) {
       localStorage.setItem('highScore', score.toString());
     }
