@@ -101,7 +101,12 @@ export const ImageScaling = {
     alignmentFromTop: 0.13,
     alignmentFromSide: 0.07,
   },
-  gameOver: SCALE * 0.8
+  gameOver: SCALE * 0.8,
+  infoNavigationButtons: {
+    close: { x: SCREEN_WIDTH * .94, y: SCREEN_WIDTH * .05 },
+    next: { x: SCREEN_WIDTH * 0.94, y: CENTER_POINT.y },
+    back:  { x: SCREEN_WIDTH * 0.05, y: CENTER_POINT.y }
+  }
 };
 
 export const Info = [

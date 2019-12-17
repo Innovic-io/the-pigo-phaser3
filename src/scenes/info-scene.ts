@@ -1,5 +1,5 @@
 import { SCREEN_HEIGHT, SCREEN_WIDTH, SCALE, CENTER_POINT, START_BTN_POSITION } from '../services/scaling.service';
-import { Info, TextConfig } from "../assets/game-config";
+import { ImageScaling, Info, TextConfig } from "../assets/game-config";
 
 export class InfoScene extends Phaser.Scene {
   counter = 0;
@@ -58,9 +58,14 @@ export class InfoScene extends Phaser.Scene {
   }
 
   addNavigationButtons() {
-    this.nextButton = this.add.image(SCREEN_WIDTH * 0.9, CENTER_POINT.y, 'nextInfo')
+    this.nextButton = this.add.image(
+      ImageScaling.infoNavigationButtons.next.x,
+      ImageScaling.infoNavigationButtons.next.y
+      , 'nextInfo')
       .setScale(SCALE * 0.8);
-    this.backButton = this.add.image(SCREEN_WIDTH * 0.1, CENTER_POINT.y, 'backInfo')
+    this.backButton = this.add.image(
+      ImageScaling.infoNavigationButtons.back.x,
+      ImageScaling.infoNavigationButtons.back.y, 'backInfo')
       .setScale(SCALE * 0.8);
 
     this.nextButton.setInteractive();
@@ -84,7 +89,10 @@ export class InfoScene extends Phaser.Scene {
   }
 
   addCloseInfoButton() {
-    const closeButton = this.add.image(SCREEN_WIDTH * 0.9, SCREEN_HEIGHT * 0.1, 'close')
+    const closeButton = this.add.image(
+      ImageScaling.infoNavigationButtons.close.x,
+      ImageScaling.infoNavigationButtons.close.y,
+      'close')
       .setScale(SCALE);
     closeButton.setInteractive();
     closeButton.on('pointerdown', () => {
