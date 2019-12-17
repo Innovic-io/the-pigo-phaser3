@@ -28,6 +28,8 @@ export class InfoScene extends Phaser.Scene {
       .setOrigin(0, 0);
     const backgroundImage = this.add.image(CENTER_POINT.x, CENTER_POINT.y, 'backgroundInfo')
       .setScale(SCALE * 1.3);
+    this.add.image(CENTER_POINT.x, SCREEN_HEIGHT * 0.9, 'instructions')
+      .setScale(SCALE);
 
     this.addCloseInfoButton();
     this.addNavigationButtons();

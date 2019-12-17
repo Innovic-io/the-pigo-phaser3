@@ -29,6 +29,11 @@
       },
       {
         "type": "image",
+        "key": "instructions",
+        "url": "./src/assets/images/instructions.png"
+      },
+      {
+        "type": "image",
         "key": "background",
         "url": "./src/assets/images/bg.png"
       },
