@@ -48,3 +48,8 @@ export const PERCENT_TXT = {
   y: CENTER_POINT.y + (CENTER_POINT.y * .09),
   size: 16 * SCALE
 };
+
+export const INFO_IMAGE_CENTER_POSITION = {
+  x: CENTER_POINT.x + SCREEN_WIDTH * 0.18,
+  y: CENTER_POINT.y
+};

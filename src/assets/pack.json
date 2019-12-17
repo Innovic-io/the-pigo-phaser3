@@ -9,6 +9,26 @@
       },
       {
         "type": "image",
+        "key": "backgroundInfo",
+        "url": "./src/assets/images/piranhaInfoBG.png"
+      },
+      {
+        "type": "image",
+        "key": "nextInfo",
+        "url": "./src/assets/images/infoNextBtn.png"
+      },
+      {
+        "type": "image",
+        "key": "backInfo",
+        "url": "./src/assets/images/infoBackBtn.png"
+      },
+      {
+        "type": "image",
+        "key": "close",
+        "url": "./src/assets/images/close.png"
+      },
+      {
+        "type": "image",
         "key": "background",
         "url": "./src/assets/images/bg.png"
       },

@@ -2,6 +2,7 @@ import 'phaser';
 import { GameScene } from './scenes/game-scene';
 import { StartScene } from './scenes/start-scene';
 import { BeginScene } from './scenes/begin-scene'
+import { InfoScene } from './scenes/info-scene'
 
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './services/scaling.service';
 
@@ -17,7 +18,7 @@ const config = {
     height: SCREEN_HEIGHT,
     zoom: 1/window.devicePixelRatio,
   },
-  scene: [StartScene, GameScene, BeginScene],
+  scene: [StartScene, GameScene, BeginScene, InfoScene],
   input: {
     keyboard: true
   },
