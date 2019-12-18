@@ -10,7 +10,7 @@ import { OilSplash } from '../objects/OilSplash';
 import { GameConfigs, ImageScaling, TextConfig } from '../assets/game-config';
 import {
   CENTER_POINT, diagonal,
-  GAME_HEIGHT_BLOCK,
+  GAME_HEIGHT_BLOCK, GAME_MIN_HEIGHT,
   SCALE,
   SCREEN_HEIGHT,
   SCREEN_WIDTH
@@ -83,6 +83,14 @@ export class GameScene extends Phaser.Scene {
     this.background = this.add
       .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
       .setOrigin(0, 0);
+    if (SCREEN_HEIGHT >= 480) {
+    this.background.setScale(1, SCREEN_HEIGHT / 480);
+    }
+    else {
+      this.background.displayHeight = SCREEN_HEIGHT + SCREEN_HEIGHT * .1;
+      this.background.setPosition(0, - SCREEN_HEIGHT * .1);
+    }
+
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
     this.gameOverExecuted = false;
@@ -440,7 +448,7 @@ export class GameScene extends Phaser.Scene {
       new Wood({
           scene: this,
           x: SCREEN_WIDTH,
-          y: SCREEN_HEIGHT * .08,
+          y: SCREEN_HEIGHT * .095,
           key: 'wood'
         },
         this.obstacleVelocities.wood + this.obstaclesSpeedIncreasing + this.speedUpBy)

@@ -23,6 +23,14 @@ export class BeginScene extends Phaser.Scene {
             .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, "background")
             .setOrigin(0, 0);
 
+      if (SCREEN_HEIGHT >= 480) {
+        this.background.setScale(1, SCREEN_HEIGHT / 480);
+      }
+      else {
+        this.background.displayHeight = SCREEN_HEIGHT + SCREEN_HEIGHT * .1;
+        this.background.setPosition(0, - SCREEN_HEIGHT * .1);
+      }
+
         const startGameLogo = this.add.sprite(CENTER_POINT.x, CENTER_POINT.y, 'startGame');
         startGameLogo.setScale(SCALE - (SCALE * .2));
 
