@@ -170,7 +170,5 @@ export const Info = [
 ];
 
 function calculatePiranhaVelocity() {
-  let addVelocity = (SCREEN_WIDTH/ SCREEN_HEIGHT);
-  addVelocity = addVelocity >= 1 ? -addVelocity  * 10 : (1/addVelocity)  * 10;
-  return   400 + addVelocity;
+  return   250 + diagonal * 0.1;
 }
