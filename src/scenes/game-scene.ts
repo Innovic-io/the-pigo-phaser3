@@ -109,7 +109,7 @@ export class GameScene extends Phaser.Scene {
       .text(
         0,
         0,
-        'LEVEL UP\nx' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()),
+        'BOOST x' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()),
         TextConfig.speedUpText
       )
       .setDepth(2);
@@ -494,7 +494,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .03);
-    this.speedUpText.setText('LEVEL UP\nx' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()));
+    this.speedUpText.setText('BOOST x' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()));
     this.speedUpText.setVisible(true);
     setTimeout(() => {
       this.speedUpText.setVisible(false);
