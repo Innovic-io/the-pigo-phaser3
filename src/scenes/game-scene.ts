@@ -497,16 +497,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   increaseObstaclesSpeedOverTime() {
-    if(this.obstaclesSpeedIncreasing > 500) {
-      return;
-    }
-
     this.speedUpText.setPosition(CENTER_POINT.x - this.speedUpText.width/2, SCREEN_HEIGHT * .03);
     this.speedUpText.setText('BOOST x' + parseInt((Math.floor(this.stopwatchCounter.seconds/5) + 1).toString()));
     this.speedUpText.setVisible(true);
     setTimeout(() => {
       this.speedUpText.setVisible(false);
     }, 2000);
+
+    if(this.obstaclesSpeedIncreasing >= 400) {
+      return;
+    }
 
     this.obstaclesSpeedIncreasing += 50;
     this.obstacleTimers.forEach(timer => {
