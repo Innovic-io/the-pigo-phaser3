@@ -167,17 +167,11 @@ export class GameScene extends Phaser.Scene {
 
   setUpBackground() {
     this.background = this.add
-      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
-      .setOrigin(0, 0);
+      .tileSprite(0, 0, this.textures.get('background').source[0].width, this.textures.get('background').source[0].height, 'background');
     const backgroundHeight = this.textures.get('background').source[0].height;
 
-    if (SCREEN_HEIGHT >= backgroundHeight) {
       this.background.setScale(1, SCREEN_HEIGHT / backgroundHeight);
-    }
-    else {
-      this.background.displayHeight = SCREEN_HEIGHT + SCREEN_HEIGHT * .1;
-      this.background.setPosition(0, - SCREEN_HEIGHT * .1);
-    }
+      this.background.setPosition(CENTER_POINT.x, CENTER_POINT.y);
 
     this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
   }
@@ -455,7 +449,7 @@ export class GameScene extends Phaser.Scene {
       new Wood({
           scene: this,
           x: SCREEN_WIDTH,
-          y: SCREEN_HEIGHT * .095,
+          y: SCREEN_HEIGHT * .12,
           key: 'wood'
         },
         this.obstacleVelocities.wood + this.obstaclesSpeedIncreasing + this.speedUpBy)
