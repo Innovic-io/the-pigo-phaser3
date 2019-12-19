@@ -80,18 +80,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.background = this.add
-      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
-      .setOrigin(0, 0);
-    if (SCREEN_HEIGHT >= 480) {
-    this.background.setScale(1, SCREEN_HEIGHT / 480);
-    }
-    else {
-      this.background.displayHeight = SCREEN_HEIGHT + SCREEN_HEIGHT * .1;
-      this.background.setPosition(0, - SCREEN_HEIGHT * .1);
-    }
+    this.setUpBackground();
 
-    this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
     this.obstacleVelocities = { ...GameConfigs.obstacleStartingVelocities };
     this.gameOverExecuted = false;
 
@@ -175,6 +165,23 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  setUpBackground() {
+    this.background = this.add
+      .tileSprite(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 'background')
+      .setOrigin(0, 0);
+    const backgroundHeight = this.textures.get('background').source[0].height;
+
+    if (SCREEN_HEIGHT >= backgroundHeight) {
+      this.background.setScale(1, SCREEN_HEIGHT / backgroundHeight);
+    }
+    else {
+      this.background.displayHeight = SCREEN_HEIGHT + SCREEN_HEIGHT * .1;
+      this.background.setPosition(0, - SCREEN_HEIGHT * .1);
+    }
+
+    this.backgroundMovementSpeed = GameConfigs.backgroundInitialSpeed;
+  }
+
   changePiranhaImage() {
     this.time.addEvent({
       delay: 500,
@@ -231,7 +238,7 @@ export class GameScene extends Phaser.Scene {
 
     Phaser.Actions.Call(
       this.speedUpWorms.getChildren(),
-      function (worm) {
+      worm => {
         worm.destroy();
       },
       this
@@ -626,7 +633,7 @@ export class GameScene extends Phaser.Scene {
     if (this.speedUpWorms.children.entries.length) {
       Phaser.Actions.Call(
         this.speedUpWorms.getChildren(),
-        function (worm) {
+        worm => {
           worm.body.setVelocity(0);
         },
         this
@@ -635,7 +642,7 @@ export class GameScene extends Phaser.Scene {
     if (this.slowDownWorms.children.entries.length) {
       Phaser.Actions.Call(
         this.slowDownWorms.getChildren(),
-        function (worm) {
+        worm => {
           worm.body.setVelocity(0);
         },
         this
@@ -644,7 +651,7 @@ export class GameScene extends Phaser.Scene {
     if (this.oilSplashes.children.entries.length) {
       Phaser.Actions.Call(
         this.oilSplashes.getChildren(),
-        function (oilSplash) {
+        oilSplash => {
           oilSplash.body.setVelocity(0);
         },
         this
