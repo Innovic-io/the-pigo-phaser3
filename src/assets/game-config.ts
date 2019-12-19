@@ -45,46 +45,46 @@ export const PiranhaConfig = {
 export const TextConfig = {
   bonus10PtsStyle: {
     fontSize: 35,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#000'  },
   stopwatch: {
     fontSize: diagonal * 0.02,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   score: {
     fontSize: diagonal * .02,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   highScore: {
     fontSize: diagonal * .04,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   speedUpText: {
     fontSize: diagonal * .03,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 5
   },
   imageButtonText: {
     fontSize: diagonal * .016,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 1
   },
   infoText: {
     fontSize: diagonal * .015,
-    fontFamily: 'Comic Sans MS',
+    fontFamily: 'Comic Sans',
     color: '#ffffff',
     stroke: '#000000',
     strokeThickness: 1
