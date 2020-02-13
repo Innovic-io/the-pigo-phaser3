@@ -12,10 +12,10 @@ export const GameConfigs = {
   backgroundSpeedIncreaseBy: 4,
   backgroundSpeedDecreaseBy: 2,
   obstacleStartingVelocities: {
-    blueFish: 500,
-    yellowFish: 400,
-    dangerFish: 1000,
-    wood: 800,
+    blueFish: 500 + SCREEN_WIDTH * .2,
+    yellowFish: 400 + SCREEN_WIDTH * .3,
+    dangerFish: 1000 + SCREEN_WIDTH * .3,
+    wood: 800 + SCREEN_WIDTH * .5,
     worms: 302,
     oilSplash: 302
   },
@@ -24,8 +24,8 @@ export const GameConfigs = {
     yellowFish: 3500,
     dangerFish: 10000,
     wood: 4500,
-    worms: 10000,
-    oilSplash: 8000
+    worms: 10000 + SCREEN_WIDTH,
+    oilSplash: 8000 + SCREEN_WIDTH
   },
   speedUpBy: 230,
   slowDownBy: 100,
@@ -39,7 +39,7 @@ export const OilSplashConfigs = {
 };
 
 export const PiranhaConfig = {
-  velocity: calculatePiranhaVelocity()
+  velocity: 300
 };
 
 export const TextConfig = {
@@ -170,5 +170,5 @@ export const Info = [
 ];
 
 function calculatePiranhaVelocity() {
-  return   250 + diagonal * 0.1;
+  return   250 + diagonal * 0.1 + SCREEN_WIDTH * 0.05;
 }

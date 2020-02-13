@@ -35,7 +35,7 @@
       {
         "type": "image",
         "key": "background",
-        "url": "./src/assets/images/bg.png"
+        "url": "./src/assets/images/bg1.png"
       },
       {
         "type": "image",
@@ -69,12 +69,27 @@
       },
       {
         "type": "image",
+        "key": "face_happy",
+        "url": "./src/assets/images/face_happy.png"
+      },
+      {
+        "type": "image",
         "key": "blue-fish",
         "url": "./src/assets/images/blue-fish.png",
         "frameConfig": {
           "frameWidth": 20,
           "frameHeight": 20
         }
+      },
+      {
+        "type": "image",
+        "key": "right_bounce",
+        "url": "./src/assets/images/right_bounce.png"
+      },
+      {
+        "type": "image",
+        "key": "left_bounce",
+        "url": "./src/assets/images/left_bounce.png"
       },
       {
         "type": "image",

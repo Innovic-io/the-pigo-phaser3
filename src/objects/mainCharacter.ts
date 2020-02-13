@@ -1,12 +1,17 @@
 import { GameConfigs, PiranhaConfig } from '../assets/game-config';
 import { SCALE } from '../services/scaling.service';
 
-export class Piranha extends Phaser.GameObjects.Sprite {
+export class MainCharacter extends Phaser.GameObjects.Sprite {
   private jumpKey: Phaser.Input.Keyboard.Key;
   private tapJumpKey = this.scene.input.activePointer;
   private isDead: boolean;
-  private isFlapping: boolean;
+  // private isFlapping: boolean;
+  changeDirection = true;
   inSpeed = false;
+  velocity = {
+    x: 300,
+    y: -300
+  };
 
   public getDead(): boolean {
     return this.isDead;
@@ -33,12 +38,12 @@ export class Piranha extends Phaser.GameObjects.Sprite {
 
     // variables
     this.isDead = false;
-    this.isFlapping = false;
+    // this.isFlapping = false;
 
     // physics
     this.scene.physics.world.enable(this);
     this.body.setGravityY(1000);
-    this.body.setSize(this.body.width/1.7, this.body.height/1.7);
+    this.body.setSize(this.body.width/1.2, this.body.height/1.2);
 
     // input
     this.jumpKey = this.scene.input.keyboard.addKey(
@@ -49,11 +54,8 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    if ((this.jumpKey.isDown || this.tapJumpKey.isDown) && !this.isFlapping) {
-      this.isFlapping = true;
+    if ((this.jumpKey.isDown || this.tapJumpKey.isDown)) {
       this.jump();
-    } else if ((this.jumpKey.isUp && !this.tapJumpKey.isDown) && this.isFlapping) {
-      this.isFlapping = false;
     }
 
     // check if off the screen
@@ -63,6 +65,17 @@ export class Piranha extends Phaser.GameObjects.Sprite {
   }
 
   jump() {
-    this.body.setVelocityY(-PiranhaConfig.velocity);
+    this.body.setVelocityX(this.velocity.x);
+    this.body.setVelocityY(this.velocity.y);
+  }
+
+  changeCharacterDirection() {
+    if (this.changeDirection) {
+      this.velocity.x = - this.velocity.x;
+      this.changeDirection = false;
+      setTimeout(() => {
+        this.changeDirection = true;
+      }, 2000)
+    }
   }
 }
